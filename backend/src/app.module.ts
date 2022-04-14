@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ChatsModule } from './chats/chats.module';
 import { UsersModule } from './users/users.module';
+import { MessageModule } from './message/message.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 
@@ -18,7 +20,9 @@ import { AuthModule } from './auth/auth.module';
       }),
       inject: [ConfigService],
     }),
+    ChatsModule,
     UsersModule,
+    MessageModule,
     AuthModule,
   ],
   controllers: [AppController],
