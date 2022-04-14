@@ -10,9 +10,9 @@ import * as argon2 from 'argon2';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
   async create(dto: CreateUserDto): Promise<User> {
-    const { name, email } = dto;
+    const { name, email, profilePicture } = dto;
     // Check if user exists
-    const user = await this.findOneByEmail(dto.email);
+    const user = await this.findOneByEmail(email);
     if (user) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
@@ -21,12 +21,17 @@ export class UsersService {
     const hashedPassowrd = await argon2.hash(dto.password);
 
     // Create user
-    const newUser = await this.userModel.create({
-      name,
-      email,
-      password: hashedPassowrd,
-    });
-    return newUser.save();
+    try {
+      const newUser = await this.userModel.create({
+        name,
+        email,
+        password: hashedPassowrd,
+        profilePicture,
+      });
+      return newUser.save();
+    } catch (err) {
+      throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -54,5 +59,15 @@ export class UsersService {
   async findOneByEmail(email: string): Promise<User> {
     const user = await this.userModel.findOne({ email }).exec();
     return user;
+  }
+
+  async searchUser(user, query): Promise<User[]> {
+    // query name or email
+    const users = await this.userModel
+      .find()
+      .or([{ name: query }, { email: query }])
+      .ne({ _id: user._id })
+      .exec();
+    return users;
   }
 }

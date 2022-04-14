@@ -12,7 +12,6 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findOneByEmail(email);
-    console.log(user, 'user');
 
     if (user && argon2.verify(user.password, password)) {
       return user;
