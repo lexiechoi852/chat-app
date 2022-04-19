@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import {
   Controller,
   Get,
@@ -6,6 +7,9 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,9 +24,10 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Request() req, @Query('search') search) {
+    return this.usersService.searchUser(req.user.id, search);
   }
 
   @Get(':id')

@@ -61,12 +61,16 @@ export class UsersService {
     return user;
   }
 
-  async searchUser(user, query): Promise<User[]> {
+  async searchUser(userId, query): Promise<User[] | []> {
     // query name or email
     const users = await this.userModel
       .find()
-      .or([{ name: query }, { email: query }])
-      .ne({ _id: user._id })
+      .or([
+        { name: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } },
+      ])
+      .where('_id')
+      .ne({ _id: userId })
       .exec();
     return users;
   }
