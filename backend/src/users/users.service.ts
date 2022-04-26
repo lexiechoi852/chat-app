@@ -1,6 +1,11 @@
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -28,7 +33,8 @@ export class UsersService {
         password: hashedPassowrd,
         profilePicture,
       });
-      return newUser.save();
+
+      return newUser;
     } catch (err) {
       throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
     }
@@ -39,21 +45,47 @@ export class UsersService {
     return users;
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOneById(id: string): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    this.findOne(id);
+  async update(userId: string, dto: UpdateUserDto) {
+    if (Object.keys(dto).length === 0) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Should update at least one property.',
+          error: 'Bad Request',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const user = this.findOneById(userId);
 
-    return `This action updates a #${id} user`;
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    const { name, email, password, profilePicture } = dto;
+
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: { name, email, password, profilePicture } },
+      { new: true },
+    );
+    return updatedUser;
   }
 
-  async remove(id: number) {
-    this.findOne(id);
+  async remove(userId: string) {
+    const user = this.findOneById(userId);
 
-    return `This action removes a #${id} user`;
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    const deletedUser = await this.userModel.findOneAndDelete({ _id: userId });
+    return deletedUser;
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -61,7 +93,7 @@ export class UsersService {
     return user;
   }
 
-  async searchUser(userId, query): Promise<User[] | []> {
+  async findUserByNameOrEmail(userId, query): Promise<User[] | []> {
     // query name or email
     const users = await this.userModel
       .find()

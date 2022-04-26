@@ -5,7 +5,6 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   Request,
   UseGuards,
@@ -25,23 +24,26 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('search')
+  findByQuery(@Request() req, @Query('q') query) {
+    return this.usersService.findUserByNameOrEmail(req.user.id, query);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(@Request() req, @Query('search') search) {
-    return this.usersService.searchUser(req.user.id, search);
+  findAll() {
+    return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(req.user.id, updateUserDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  remove(@Request() req) {
+    return this.usersService.remove(req.user.id);
   }
 }
