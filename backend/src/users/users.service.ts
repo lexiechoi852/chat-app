@@ -69,8 +69,8 @@ export class UsersService {
 
     const { name, email, password, profilePicture } = dto;
 
-    const updatedUser = await this.userModel.findOneAndUpdate(
-      { _id: userId },
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
       { $set: { name, email, password, profilePicture } },
       { new: true },
     );
