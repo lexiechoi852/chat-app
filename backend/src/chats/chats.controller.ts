@@ -1,3 +1,6 @@
+import { MortifyGroupChatUserstDto } from './dto/mortify-group-chat-users';
+import { CreateSingleChatDto } from './dto/create-single-chat.dto';
+import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import {
   Controller,
   Get,
@@ -6,33 +9,57 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ChatsService } from './chats.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+import { CreateGroupChatDto } from './dto/create-group-chat.dto';
+import { RenameChatDto } from './dto/rename-chat.dto';
 
 @Controller('chats')
+@UseGuards(JwtAuthGuard)
 export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
-  @Post()
-  create(@Body() createChatDto: CreateChatDto) {
-    return this.chatsService.create(createChatDto);
+  @Post('single')
+  createSingleChat(@Request() req, @Body() dto: CreateSingleChatDto) {
+    return this.chatsService.createSingleChat(req.user.id, dto);
+  }
+
+  @Post('group')
+  createGroupChat(@Request() req, @Body() dto: CreateGroupChatDto) {
+    return this.chatsService.createGroupChat(req.user.id, dto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.chatsService.findOne(id);
+  findChatById(@Param('id') id: string) {
+    return this.chatsService.findChatById(id);
   }
 
   @Get()
-  findAll() {
-    return this.chatsService.findAll();
+  findAll(@Request() req) {
+    return this.chatsService.findAll(req.user.id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChatDto: UpdateChatDto) {
-    return this.chatsService.update(id, updateChatDto);
+  @Patch('rename/:id')
+  renameChatName(@Param('id') id: string, @Body() dto: RenameChatDto) {
+    return this.chatsService.renameChatName(id, dto);
+  }
+
+  @Patch('add-user/:id')
+  addUserToGroup(
+    @Param('id') id: string,
+    @Body() dto: MortifyGroupChatUserstDto,
+  ) {
+    return this.chatsService.addUserToGroup(id, dto);
+  }
+
+  @Patch('remove-user/:id')
+  removeUserFromGroup(
+    @Param('id') id: string,
+    @Body() dto: MortifyGroupChatUserstDto,
+  ) {
+    return this.chatsService.removeUserFromGroup(id, dto);
   }
 
   @Delete(':id')
