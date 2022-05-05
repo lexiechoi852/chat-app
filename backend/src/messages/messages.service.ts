@@ -7,7 +7,7 @@ import { Chat, ChatDocument } from 'src/chats/schemas/chat.schema';
 import { User, UserDocument } from 'src/users/schemas/user.schema';
 
 @Injectable()
-export class MessageService {
+export class MessagesService {
   constructor(
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
     @InjectModel(Chat.name) private chatModel: Model<ChatDocument>,
@@ -50,5 +50,13 @@ export class MessageService {
       .populate('chat');
 
     return messages;
+  }
+
+  join(name: string, client: string) {
+    //  Get user name
+  }
+
+  getClientName(client: string) {
+    // Helper function: Get client name
   }
 }

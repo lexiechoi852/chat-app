@@ -1,7 +1,7 @@
-import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
-import { MessageService } from './message.service';
-import { MessageController } from './message.controller';
+import { MessagesService } from './messages.service';
+import { MessagesGateway } from './messages.gateway';
+import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from './schemas/message.schema';
 import { Chat, ChatSchema } from 'src/chats/schemas/chat.schema';
 import { User, UserSchema } from 'src/users/schemas/user.schema';
@@ -14,7 +14,6 @@ import { User, UserSchema } from 'src/users/schemas/user.schema';
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [MessageController],
-  providers: [MessageService],
+  providers: [MessagesGateway, MessagesService],
 })
-export class MessageModule {}
+export class MessagesModule {}
