@@ -13,7 +13,7 @@ export default function LoginPage() {
       borderColor={['', 'gray.300']}
       borderRadius={10}
     >
-      <VStack w='full' p={[8 ,10]}>
+      <VStack w='full' p={8}>
         <HStack padding={2}>
             <Image src='chat-icon.png' boxSize='40px'  />
             <Heading ml='2'>Chat App</Heading>
