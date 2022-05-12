@@ -1,11 +1,17 @@
 import { CloseIcon } from '@chakra-ui/icons';
-import { Box, Button, FormControl, FormLabel, HStack, Input, VStack, Image, InputGroup, InputRightElement } from '@chakra-ui/react'
+import { Box, Button, FormControl, FormLabel, HStack, Input, VStack, Image, InputGroup, InputRightElement, useToast } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function UploadPage() {
   const [image, setImage] = useState<File | undefined>(undefined);
   const [preview, setPreview] = useState<string>('default-single-icon.svg');
+  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  
+  const toast = useToast();
 
   useEffect(() => {
     if (!image) {
@@ -30,8 +36,45 @@ export default function UploadPage() {
     setImage(e.target.files[0]);
   };
 
-  const upload = () => {
-    
+  const upload = async () => {
+    setLoading(true);
+    if (!image) {
+      toast({
+        title: 'Please upload an image for profile picture.',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+      setLoading(false);
+    }
+
+    if (image) {
+      const formData = new FormData();
+      formData.append('file', image);
+      formData.append('upload_preset', 'chat-app');
+      const url = process.env.REACT_APP_CLOUDINARY_URL;
+      
+      if (url) {
+        const data = await fetch(url, {
+          method: 'POST',
+          body: formData
+        });
+  
+        if (data) {
+          toast({
+            title: 'Successfully upload profile picture.',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+            position: 'bottom'
+          });
+          setLoading(false);
+          navigate('/');
+        }
+      }
+    }
+
   };
 
   const reset = () => {
@@ -83,6 +126,7 @@ export default function UploadPage() {
               w={['full', 'auto']} 
               alignSelf='end' 
               onClick={()=>upload()}
+              isLoading={loading}
             >
               Upload
             </Button>
