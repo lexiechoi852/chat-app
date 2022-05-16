@@ -15,11 +15,11 @@ const root = createRoot(container);
 root.render(
   <React.StrictMode>
       <BrowserRouter>
-      <Provider store={store}>
-          <ChakraProvider>
-            <App />
-          </ChakraProvider>
-      </Provider>
+        <Provider store={store}>
+            <ChakraProvider>
+              <App />
+            </ChakraProvider>
+        </Provider>
       </BrowserRouter>
   </React.StrictMode>
 );

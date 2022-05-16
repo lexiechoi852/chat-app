@@ -2,7 +2,6 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { Box, Button, FormControl, FormLabel, HStack, Input, VStack, Image, InputGroup, InputRightElement, useToast } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 export default function UploadPage() {
   const [image, setImage] = useState<File | undefined>(undefined);

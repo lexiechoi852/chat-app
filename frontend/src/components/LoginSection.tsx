@@ -35,7 +35,12 @@ export default function LoginSection() {
                 Forgot Password?
             </Button>
         </HStack>
-        <Button rounded='none' colorScheme='blue' w={['full', 'auto']} alignSelf='end'>
+        <Button
+            rounded='none' 
+            colorScheme='blue' 
+            w={['full', 'auto']} 
+            alignSelf='end'
+        >
             Login
         </Button>
     </VStack>

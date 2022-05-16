@@ -54,8 +54,13 @@ export default function SignUpSection() {
             </InputRightElement>
           </InputGroup>
       </FormControl>
-      <Button rounded='none' colorScheme='blue' w={['full', 'auto']} alignSelf='end'>
-          Sign Up
+      <Button 
+        rounded='none' 
+        colorScheme='blue' 
+        w={['full', 'auto']} 
+        alignSelf='end'
+      >
+        Sign Up
       </Button>
     </VStack>
   )
