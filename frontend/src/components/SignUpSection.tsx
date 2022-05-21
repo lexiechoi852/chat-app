@@ -1,5 +1,7 @@
-import { Button, FormControl, FormLabel, Text, Input, VStack, InputRightElement, InputGroup } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import { Button, FormControl, FormLabel, Text, Input, VStack, InputRightElement, InputGroup, useToast } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks';
 
 export default function SignUpSection() {
   const [email, setEmail] = useState('');
@@ -7,11 +9,30 @@ export default function SignUpSection() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const toast = useToast();
   
+  const navigate = useNavigate;
+  const dispatch = useAppDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useAppSelector((state) => state.auth);
 
   const submit = () => {
-
+    if (password !== confirmPassword) {
+      toast({
+        title: 'Passwords do not match',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    }
   };
+
+  useEffect(() => {
+
+  }, [user, isError, isSuccess, message])
+  
 
   return (
     <VStack spacing={4} align='flex-start' w='full'>
@@ -59,6 +80,7 @@ export default function SignUpSection() {
         colorScheme='blue' 
         w={['full', 'auto']} 
         alignSelf='end'
+        onClick={submit}
       >
         Sign Up
       </Button>
