@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { register } from './authThunk';
+import { login, register } from './authThunk';
+import { UserState } from './usersSlice';
 
 const user = JSON.parse(localStorage.getItem('user') || 'null');
 
 export interface AuthState {
-  user: string | null;
+  user: UserState | null;
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
@@ -41,6 +42,20 @@ export const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.user = null;
+        // state.message = action.payload;
+      })
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.user = null;

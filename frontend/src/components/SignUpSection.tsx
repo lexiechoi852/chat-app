@@ -2,6 +2,8 @@ import { Button, FormControl, FormLabel, Text, Input, VStack, InputRightElement,
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
+import { reset } from '../store/authSlice';
+import { register } from '../store/authThunk';
 
 export default function SignUpSection() {
   const [email, setEmail] = useState('');
@@ -12,7 +14,7 @@ export default function SignUpSection() {
 
   const toast = useToast();
   
-  const navigate = useNavigate;
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const { user, isLoading, isError, isSuccess, message } = useAppSelector((state) => state.auth);
@@ -26,12 +28,34 @@ export default function SignUpSection() {
         isClosable: true,
         position: 'bottom'
       });
+    } else {
+      const newUser = {
+        name,
+        email,
+        password
+      }
+      dispatch(register(newUser));
     }
   };
 
   useEffect(() => {
+    if (isError) {
+      toast({
+        title: message,
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    }
 
-  }, [user, isError, isSuccess, message])
+    if (isSuccess || user) {
+      navigate('/');
+    }
+
+    dispatch(reset());
+
+  }, [user, isError, isSuccess, message, navigate, dispatch])
   
 
   return (
@@ -80,6 +104,7 @@ export default function SignUpSection() {
         colorScheme='blue' 
         w={['full', 'auto']} 
         alignSelf='end'
+        isLoading={isLoading}
         onClick={submit}
       >
         Sign Up
