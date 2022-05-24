@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { UserState } from './usersSlice';
 
 const API_BASE_URL = '/api/auth/';
@@ -15,10 +15,9 @@ interface LoginUserAttributes {
     password: string;
 }
 
-export const register = createAsyncThunk<UserState, RegisterUserAttributes>(
+export const register = createAsyncThunk<UserState, RegisterUserAttributes,{ rejectValue: string }>(
     ('auth/register'), async (user, thunkAPI) => {
         try {
-            console.log(user, 'register user')
             const res = await axios.post(`${API_BASE_URL}/signup`, user);
             console.log(res.data, 'res.data')
             if (res.data) {
@@ -27,17 +26,18 @@ export const register = createAsyncThunk<UserState, RegisterUserAttributes>(
     
             return res.data;
         } catch (err) {
-           console.log(err, 'register err')
-           let message = 'something went wrong'
-           return thunkAPI.rejectWithValue(message);
+            if (err instanceof AxiosError) {
+                const message = ( err.response && err.response.data && err.response.data.message ) || err.message || err.toString();
+                return thunkAPI.rejectWithValue(message);
+            }
+            throw err;
         }
     }
 )
 
-export const login = createAsyncThunk<UserState, LoginUserAttributes>(
+export const login = createAsyncThunk<UserState, LoginUserAttributes,{ rejectValue: string }>(
     ('auth/login'), async (user, thunkAPI) => {
         try {
-            console.log(user, 'login user')
             const res = await axios.post(`${API_BASE_URL}/login`, user);
             console.log(res.data, 'res.data')
             if (res.data) {
@@ -46,9 +46,11 @@ export const login = createAsyncThunk<UserState, LoginUserAttributes>(
     
             return res.data;
         } catch (err) {
-           console.log(err, 'login err')
-           let message = 'something went wrong'
-           return thunkAPI.rejectWithValue(message);
+            if (err instanceof AxiosError) {
+                const message = ( err.response && err.response.data && err.response.data.message ) || err.message || err.toString();
+                return thunkAPI.rejectWithValue(message);
+            }
+            throw err;
         }
     }
 )

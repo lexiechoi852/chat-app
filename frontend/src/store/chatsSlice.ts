@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export interface ChatState {
+interface Chat {
   chatName?: string;
   isGroupChat?: boolean;
   users?: any;
@@ -8,9 +8,16 @@ export interface ChatState {
   groupAdmin?: any;
 }
 
-const initialState: ChatState = {
-  
+export interface ChatState {
+  chats: Chat[];
+  status: "loading" | "idle";
+  error: string | null;
+}
 
+const initialState: ChatState = {
+  chats: [],
+  status: "idle",
+  error: null
 }
 
 export const chatsSlice = createSlice({

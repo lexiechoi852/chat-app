@@ -15,7 +15,7 @@ export default function LoginSection() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { user, isLoading, isError, isSuccess, message } = useAppSelector((state) => state.auth);
+  const { user, isLoading, isError, message } = useAppSelector((state) => state.auth);
 
   const submit = () => {
     if (!email || !password) {
@@ -45,13 +45,20 @@ export default function LoginSection() {
       });
     }
 
-    if (isSuccess || user) {
+    if (user) {
+      toast({
+        title: 'Login Success',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      })
       navigate('/');
     }
 
     dispatch(reset());
 
-  }, [user, isError, isSuccess, message, navigate, dispatch])
+  }, [user, isError, message, navigate, dispatch])
   
 
   return (
