@@ -1,17 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { login, register } from './authThunk';
-import { UserState } from './usersSlice';
+import { login, logout, register } from './authThunk';
+import { User } from './usersSlice';
 
 const user = JSON.parse(localStorage.getItem('user') || 'null');
 
 export interface AuthState {
-  user: UserState | null;
+  isAuth: boolean,
+  user: User | null;
   isLoading: boolean;
   isError: boolean;
   message: string;
 }
 
 const initialState: AuthState = {
+  isAuth: (localStorage.getItem('token') !== null),
   user: null,
   isLoading: false,
   isError: false,
@@ -60,6 +62,9 @@ export const authSlice = createSlice({
         if (action.payload) {
           state.message = action.payload;
         }
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.isAuth = false;
       })
   }
 })
