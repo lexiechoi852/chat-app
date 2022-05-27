@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { login, logout, register } from './authThunk';
+import { getInfo, login, logout, register } from './authThunk';
 import { User } from './usersSlice';
 
 const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -7,6 +7,7 @@ const user = JSON.parse(localStorage.getItem('user') || 'null');
 export interface AuthState {
   isAuth: boolean,
   user: User | null;
+  isSuccess: boolean;
   isLoading: boolean;
   isError: boolean;
   message: string;
@@ -15,6 +16,7 @@ export interface AuthState {
 const initialState: AuthState = {
   isAuth: (localStorage.getItem('token') !== null),
   user: null,
+  isSuccess: false,
   isLoading: false,
   isError: false,
   message: ''
@@ -35,14 +37,13 @@ export const authSlice = createSlice({
       .addCase(register.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(register.fulfilled, (state) => {
         state.isLoading = false;
-        state.user = action.payload;
+        state.isSuccess = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.user = null;
         if (action.payload) {
           state.message = action.payload;
         }
@@ -59,7 +60,6 @@ export const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.user = null;
         
         if (action.payload) {
           state.message = action.payload;
@@ -68,6 +68,22 @@ export const authSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.isAuth = false;
         state.user = null;
+      })
+      .addCase(getInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getInfo.fulfilled, (state) => {
+        state.isAuth = false;
+        state.user = null;
+      })
+      .addCase(getInfo.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.user = null;
+        
+        if (action.payload) {
+          state.message = action.payload;
+        }
       })
   }
 })
