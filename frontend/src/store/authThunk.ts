@@ -23,10 +23,6 @@ export const register = createAsyncThunk<User, RegisterUserAttributes, { rejectV
     ('auth/register'), async (user, thunkAPI) => {
         try {
             const res = await axios.post(`${API_BASE_URL}/signup`, user);
-            console.log(res.data, 'res.data')
-            if (res.data) {
-                localStorage.setItem('user', JSON.stringify(res.data))
-            }
     
             return res.data;
         } catch (err) {
@@ -43,9 +39,8 @@ export const login = createAsyncThunk<LoginData, LoginUserAttributes, { rejectVa
     ('auth/login'), async (user, thunkAPI) => {
         try {
             const res = await axios.post(`${API_BASE_URL}/login`, user);
-            console.log(res.data, 'res.data')
             if (res.data) {
-                localStorage.setItem('token', JSON.stringify(res.data.access_token))
+                localStorage.setItem('token', res.data.access_token)
             }
     
             return res.data;
@@ -62,13 +57,11 @@ export const login = createAsyncThunk<LoginData, LoginUserAttributes, { rejectVa
 export const getInfo = createAsyncThunk<User, void, { rejectValue: string }>(
     ('auth/info'), async (_, thunkAPI) => {
         try {
-            console.log(localStorage.getItem('token'), 'token')
             const res = await axios.get(`${API_BASE_URL}/info`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            console.log(res.data, 'res.data')
     
             return res.data;
         } catch (err) {
