@@ -13,12 +13,14 @@ export interface User {
 }
 
 export interface UserState {
+  users: User[]
   isLoading: boolean;
   isError: boolean;
   message: string;
 }
 
 const initialState: UserState = {
+  users: [],
   isLoading: false,
   isError: false,
   message: ''
@@ -41,10 +43,12 @@ export const usersSlice = createSlice({
     })
     .addCase(fetchAllUsers.fulfilled, (state, action) => {
       state.isLoading = false;
+      state.users = action.payload;
     })
     .addCase(fetchAllUsers.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
+
       if (action.payload) {
         state.message = action.payload;
       }
@@ -58,6 +62,7 @@ export const usersSlice = createSlice({
     .addCase(updateUserProfile.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
+      
       if (action.payload) {
         state.message = action.payload;
       }
@@ -71,6 +76,7 @@ export const usersSlice = createSlice({
     .addCase(searchUsers.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
+      
       if (action.payload) {
         state.message = action.payload;
       }

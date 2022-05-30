@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { User } from "./usersSlice";
 
-const API_BASE_URL = '/api/users/';
+const API_BASE_URL = '/api/users';
 
 interface UpdateUserProfileAttributes {
     email?: string;
