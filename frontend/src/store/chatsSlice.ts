@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { fetchAllChats } from './chatsThunk';
+import { createGroupChat, createSingleChat, fetchAllChats } from './chatsThunk';
 import { User } from './usersSlice';
 
 export interface Chat {
@@ -44,6 +44,36 @@ export const chatsSlice = createSlice({
         state.chats = action.payload;
       })
       .addCase(fetchAllChats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+
+        if (action.payload) {
+          state.message = action.payload;
+        }
+      })
+      .addCase(createSingleChat.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createSingleChat.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.chats = [...state.chats, action.payload];
+      })
+      .addCase(createSingleChat.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+
+        if (action.payload) {
+          state.message = action.payload;
+        }
+      })
+      .addCase(createGroupChat.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createGroupChat.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.chats = [...state.chats, action.payload];
+      })
+      .addCase(createGroupChat.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
 
