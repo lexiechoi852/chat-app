@@ -1,6 +1,9 @@
 import { ArrowBackIcon, ChatIcon } from '@chakra-ui/icons'
 import { Box, Text, Tab, TabList, TabPanel, TabPanels, Tabs, HStack, Avatar } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { fetchAllChats } from '../store/chatsThunk'
+import { fetchAllUsers } from '../store/usersThunk'
 import ChatList from './ChatList'
 import NewChat from './NewChat'
 import Search from './Search'
@@ -8,10 +11,24 @@ import Search from './Search'
 export default function SideBar() {
   const [tabIndex, setTabIndex] = useState(0)
 
+  const dispatch = useAppDispatch();
+  const { user } =  useAppSelector((state) => state.auth);
+  const { users } =  useAppSelector((state) => state.users);
+  const { chats } =  useAppSelector((state) => state.chats);
+
+  useEffect(() => {
+    dispatch(fetchAllChats())
+    dispatch(fetchAllUsers())
+
+  }, [])
+  
+
   return (
     <Box 
       w='30%'
       p={4}
+      h='100vh'
+      overflow='hidden'
       background-color='gray.400'
     >
       <Tabs 
@@ -22,7 +39,7 @@ export default function SideBar() {
         <TabList>
           { tabIndex === 0 && 
             <HStack w='full'>
-              <Avatar size='sm' name='Dan Abrahmov' mr='auto' src='https://bit.ly/dan-abamov' />
+              <Avatar size='sm' name={user?.name} mr='auto' src='' />
               <Tab onClick={()=>setTabIndex(1)}>
                 <ChatIcon w={8} color='gray.900' />
               </Tab>
@@ -41,11 +58,11 @@ export default function SideBar() {
         <TabPanels>
           <TabPanel p={0}>
             <Search mode='chat' />
-            <ChatList />
+            <ChatList chats={chats} />
           </TabPanel>
           <TabPanel p={0}>
             <Search mode='new-chat' />
-            <NewChat />
+            <NewChat users={users} />
           </TabPanel>
         </TabPanels>
       </Tabs>
