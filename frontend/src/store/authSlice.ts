@@ -4,7 +4,7 @@ import { User } from './usersSlice';
 
 export interface AuthState {
   isAuth: boolean,
-  user: User | null;
+  user: User | undefined;
   isRegisterSuccess: boolean;
   isLoading: boolean;
   isError: boolean;
@@ -13,7 +13,7 @@ export interface AuthState {
 
 const initialState: AuthState = {
   isAuth: (localStorage.getItem('token') !== null),
-  user: null,
+  user: undefined,
   isRegisterSuccess: false,
   isLoading: false,
   isError: false,
@@ -67,7 +67,7 @@ export const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state) => {
         state.isAuth = false;
-        state.user = null;
+        state.user = undefined;
       })
       .addCase(getInfo.pending, (state) => {
         state.isLoading = true;
@@ -79,7 +79,7 @@ export const authSlice = createSlice({
       .addCase(getInfo.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.user = null;
+        state.user = undefined;
         
         if (action.payload) {
           state.message = action.payload;
