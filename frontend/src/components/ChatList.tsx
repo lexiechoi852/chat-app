@@ -11,10 +11,17 @@ export default function ChatList({ chats } : ChatListProps) {
   return (
     <VStack mt={4}>
       {chats && chats.map((chat, i) => 
-        <Box key={i} w='full' borderWidth='1px' borderRadius='lg' overflow='hidden'>
+        <Box 
+          key={i}
+          w='full'
+          padding={2}
+          borderWidth='1px'
+          borderRadius='lg'
+          overflow='hidden'
+        >
           <HStack>
-            {chat.isGroupChat && <Image boxSize='40px' src='default-group-icon.svg' />}
-            {!chat.isGroupChat && <Image boxSize='40px' src='default-single-icon.svg' />}
+            {chat.isGroupChat && <Image boxSize='48px' src='default-group-icon.svg' />}
+            {!chat.isGroupChat && <Image boxSize='48px' src='default-single-icon.svg' />}
             
             <Box>
               {chat.chatName}

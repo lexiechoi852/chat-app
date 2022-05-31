@@ -62,7 +62,7 @@ export default function SideBar() {
           </TabPanel>
           <TabPanel p={0}>
             <Search mode='new-chat' />
-            <NewChat users={users} />
+            <NewChat users={users} chats={chats} currentUser={user} />
           </TabPanel>
         </TabPanels>
       </Tabs>
