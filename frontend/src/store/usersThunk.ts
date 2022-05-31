@@ -48,7 +48,7 @@ export const updateUserProfile = createAsyncThunk<User, UpdateUserProfileAttribu
     }
 )
 
-export const searchUsers = createAsyncThunk<User[], void, { rejectValue: string }>(
+export const searchUsers = createAsyncThunk<User[], string, { rejectValue: string }>(
     ('users/search'), async (search, thunkAPI) => {
         try {
             const res = await axios.get(`${API_BASE_URL}/search`, {

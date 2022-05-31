@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { fetchChatById } from './chatsThunk';
 import { fetchAllUsers, searchUsers, updateUserProfile } from './usersThunk';
 
 
@@ -13,7 +14,9 @@ export interface User {
 }
 
 export interface UserState {
-  users: User[]
+  users: User[];
+  searchText: string;
+  searchResult: User[];
   isLoading: boolean;
   isError: boolean;
   message: string;
@@ -21,6 +24,8 @@ export interface UserState {
 
 const initialState: UserState = {
   users: [],
+  searchText: '',
+  searchResult: [],
   isLoading: false,
   isError: false,
   message: ''
@@ -72,6 +77,7 @@ export const usersSlice = createSlice({
     })
     .addCase(searchUsers.fulfilled, (state, action) => {
       state.isLoading = false;
+      state.searchResult = action.payload;
     })
     .addCase(searchUsers.rejected, (state, action) => {
       state.isLoading = false;
