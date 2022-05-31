@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { createGroupChat, createSingleChat, fetchAllChats } from './chatsThunk';
+import { createGroupChat, createSingleChat, fetchAllChats, fetchChatById } from './chatsThunk';
 import { User } from './usersSlice';
 
 export interface Chat {
@@ -8,6 +8,10 @@ export interface Chat {
   users: User[];
   latestMessage: any;
   groupAdmin?: User;
+  _id: string;
+  _v: number;
+  createdAt: Date,
+  updatedAt: Date
 }
 
 export interface ChatState {
@@ -44,6 +48,20 @@ export const chatsSlice = createSlice({
         state.chats = action.payload;
       })
       .addCase(fetchAllChats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+
+        if (action.payload) {
+          state.message = action.payload;
+        }
+      })
+      .addCase(fetchChatById.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchChatById.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(fetchChatById.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
 

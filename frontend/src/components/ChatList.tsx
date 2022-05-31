@@ -1,13 +1,22 @@
 import { VStack, Box, Image, HStack } from '@chakra-ui/react'
 import React from 'react'
+import { useAppDispatch } from '../hooks';
 import { Chat } from '../store/chatsSlice'
+import { fetchChatById } from '../store/chatsThunk';
 
 interface ChatListProps {
   chats: Chat[]
 }
 
 export default function ChatList({ chats } : ChatListProps) {
-  console.log(chats, 'chats')
+
+  const dispatch = useAppDispatch();
+  
+  const fetchChat = (chatId: string) => {
+    dispatch(fetchChatById(chatId));
+  }
+
+  // console.log(chats, 'chats')
   return (
     <VStack mt={4}>
       {chats && chats.map((chat, i) => 
@@ -18,6 +27,8 @@ export default function ChatList({ chats } : ChatListProps) {
           borderWidth='1px'
           borderRadius='lg'
           overflow='hidden'
+          cursor='pointer'
+          onClick={() => fetchChat(chat._id)}
         >
           <HStack>
             {chat.isGroupChat && <Image boxSize='48px' src='default-group-icon.svg' />}

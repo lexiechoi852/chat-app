@@ -4,7 +4,7 @@ import { Chat } from "./chatsSlice";
 
 const API_BASE_URL = '/api/chats';
 
-interface CreateSingleChatAttributes {
+export interface CreateSingleChatAttributes {
     chatName: string,
     userId: string
 }
@@ -14,7 +14,7 @@ interface CreateGroupChatAttributes {
     userIds: string[]
 }
 
-export const fetchAllChats = createAsyncThunk<Chat[], void,  { rejectValue: string }>(
+export const fetchAllChats = createAsyncThunk<Chat[], void, { rejectValue: string }>(
     ('chats/fetchAll'), async (_, thunkAPI) => {
         try {
             const res = await axios.get(`${API_BASE_URL}`, {
@@ -34,7 +34,27 @@ export const fetchAllChats = createAsyncThunk<Chat[], void,  { rejectValue: stri
     }
 )
 
-export const createSingleChat = createAsyncThunk<Chat, CreateSingleChatAttributes,  { rejectValue: string }>(
+export const fetchChatById = createAsyncThunk<Chat, string, { rejectValue: string }>(
+    ('chats/fetchById'), async (chatId, thunkAPI) => {
+        try {
+            const res = await axios.get(`${API_BASE_URL}/${chatId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log(res.data, 'chat')
+            return res.data;
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                const message = ( err.response && err.response.data && err.response.data.message ) || err.message || err.toString();
+                return thunkAPI.rejectWithValue(message);
+            }
+            throw err;
+        }
+    }
+)
+
+export const createSingleChat = createAsyncThunk<Chat, CreateSingleChatAttributes, { rejectValue: string }>(
     ('chats/createSingle'), async (newChat, thunkAPI) => {
         try {
             const res = await axios.post(`${API_BASE_URL}/single`, {
@@ -58,7 +78,7 @@ export const createSingleChat = createAsyncThunk<Chat, CreateSingleChatAttribute
     }
 )
 
-export const createGroupChat = createAsyncThunk<Chat, CreateGroupChatAttributes,  { rejectValue: string }>(
+export const createGroupChat = createAsyncThunk<Chat, CreateGroupChatAttributes, { rejectValue: string }>(
     ('chats/createGroup'), async (newChat, thunkAPI) => {
         try {
             const res = await axios.post(`${API_BASE_URL}/group`, {
