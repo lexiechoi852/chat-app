@@ -3,17 +3,33 @@ import React from 'react'
 import { useAppDispatch } from '../hooks';
 import { Chat } from '../store/chatsSlice'
 import { fetchChatById } from '../store/chatsThunk';
+import { User } from '../store/usersSlice';
 
 interface ChatListProps {
-  chats: Chat[]
+  chats: Chat[];
+  currentUser?: User;
 }
 
-export default function ChatList({ chats } : ChatListProps) {
+export default function ChatList({ chats, currentUser } : ChatListProps) {
 
   const dispatch = useAppDispatch();
   
   const fetchChat = (chatId: string) => {
     dispatch(fetchChatById(chatId));
+  }
+
+  const handleChatName = (currentUser: User | undefined, chat: Chat) => {
+    if (!currentUser) {
+      return;
+    }
+
+    const user = chat.users.find(user => currentUser._id !== user._id);
+    console.log(user, 'handleChatName')
+    if (user) {
+      return user.name;
+    } else {
+      return chat.chatName;
+    }
   }
 
   // console.log(chats, 'chats')
@@ -31,15 +47,17 @@ export default function ChatList({ chats } : ChatListProps) {
           onClick={() => fetchChat(chat._id)}
         >
           <HStack>
-            {chat.isGroupChat && <Image boxSize='48px' src='default-group-icon.svg' />}
-            {!chat.isGroupChat && <Image boxSize='48px' src='default-single-icon.svg' />}
+          <Image 
+            boxSize='48px' 
+            src={chat.isGroupChat 
+              ? 'default-group-icon.svg' 
+              : 'default-single-icon.svg'}
+          />
+        
+            <Box>
+              {chat.isGroupChat ? chat.chatName : handleChatName(currentUser, chat)}
+            </Box>
             
-            <Box>
-              {chat.chatName}
-            </Box>
-            <Box>
-              
-            </Box>
           </HStack>
         </Box>
       )}
