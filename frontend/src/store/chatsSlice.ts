@@ -16,6 +16,7 @@ export interface Chat {
 
 export interface ChatState {
   chats: Chat[];
+  currentChat: Chat | undefined;
   isLoading: boolean;
   isError: boolean;
   message: string;
@@ -23,6 +24,7 @@ export interface ChatState {
 
 const initialState: ChatState = {
   chats: [],
+  currentChat: undefined,
   isLoading: false,
   isError: false,
   message: ''
@@ -36,6 +38,15 @@ export const chatsSlice = createSlice({
       state.isLoading = false;
       state.isError = false;
       state.message = '';
+    },
+    setCurrentChat: (state, action) => {
+      if (state.chats && state.chats.length > 0) {
+        const chat = state.chats.find(chat => chat._id === action.payload);
+
+        if (chat) {
+          state.currentChat = chat;
+        }
+      }
     }
   },
   extraReducers: (builder) => {
@@ -60,6 +71,7 @@ export const chatsSlice = createSlice({
       })
       .addCase(fetchChatById.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.currentChat = action.payload;
       })
       .addCase(fetchChatById.rejected, (state, action) => {
         state.isLoading = false;
@@ -102,6 +114,6 @@ export const chatsSlice = createSlice({
   }
 })
 
-export const { reset } = chatsSlice.actions
+export const { reset, setCurrentChat } = chatsSlice.actions
 
 export default chatsSlice.reducer

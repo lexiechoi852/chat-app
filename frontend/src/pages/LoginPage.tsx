@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { reset } from '../store/authSlice';
-import { getInfo, login } from '../store/authThunk';
+import { login } from '../store/authThunk';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -53,7 +53,6 @@ export default function LoginPage() {
         isClosable: true,
         position: 'bottom'
       })
-      dispatch(getInfo());
       navigate('/');
     }
 
