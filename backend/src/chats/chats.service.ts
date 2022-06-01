@@ -47,7 +47,7 @@ export class ChatsService {
       const newGroupChat = await this.chatModel.create({
         chatName,
         isGroupChat: true,
-        users: userIds,
+        users: userIds.concat(currentUserId),
         groupAdmin: currentUserId,
       });
 
@@ -63,7 +63,7 @@ export class ChatsService {
 
   async findAll(userId: string) {
     const chats = await this.chatModel
-      .find({ $match: { users: { $elemMatch: { $eq: userId } } } })
+      .find({ users: { $elemMatch: { $eq: userId } } })
       .populate('users', '-password')
       .populate('groupAdmin', '-password')
       .populate('latestMessage')
