@@ -22,15 +22,15 @@ export class UsersService {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
 
-    // Hashe password
-    const hashedPassowrd = await argon2.hash(dto.password);
+    // Hashed password
+    const hashedPassword = await argon2.hash(dto.password);
 
     // Create user
     try {
       const newUser = await this.userModel.create({
         name,
         email,
-        password: hashedPassowrd,
+        password: hashedPassword,
         profilePicture,
       });
 

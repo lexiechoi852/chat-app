@@ -10,7 +10,7 @@ import NewChat from './NewChat'
 import Search from './Search'
 
 export default function SideBar() {
-  const [tabIndex, setTabIndex] = useState(0)
+  const [tabIndex, setTabIndex] = useState(0);
 
   const dispatch = useAppDispatch();
   const { user } =  useAppSelector((state) => state.auth);
