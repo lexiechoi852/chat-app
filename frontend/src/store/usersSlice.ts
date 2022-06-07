@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { fetchChatById } from './chatsThunk';
 import { fetchAllUsers, searchUsers, updateUserProfile } from './usersThunk';
 
 
