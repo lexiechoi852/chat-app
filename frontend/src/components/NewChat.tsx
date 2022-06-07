@@ -12,16 +12,23 @@ interface NewChatProps {
 }
 
 export default function NewChat({ users, chats, currentUser }: NewChatProps) {
-  console.log(users, 'users')
 
   const dispatch = useAppDispatch();
   
+  const createGroupChat = () => {
+
+  }
+  
+  const handleChat = (user: User) => {
+
+  }
+
   return (
     <VStack mt={4} maxH='100vh' overflowY='auto'>
       <Box w='full'>
         <HStack 
           padding={2} 
-          // onClick={createGroupChat}
+          onClick={createGroupChat}
         >
           <Image boxSize='40px' mr={2} src='default-group-icon.svg'/>
           <Text>New Group</Text>
@@ -33,12 +40,13 @@ export default function NewChat({ users, chats, currentUser }: NewChatProps) {
           key={i} 
           w='full'
           padding={2}
+          borderWidth='1px'
+          borderRadius='lg'
           cursor='pointer'
-          borderRadius={5}
           _hover={{
             background: '#f1f5f9'
           }}
-          // onClick={() => handleChat(user)}
+          onClick={() => handleChat(user)}
         >
           <Avatar boxSize='40px' name={user.name} mr={2} src='' />
           <Text>{user.name}</Text>
