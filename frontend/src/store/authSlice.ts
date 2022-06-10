@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getInfo, login, logout, register } from './authThunk';
+import { getInfo, login, logout, register, updateUserProfile, uploadProfilePicture } from './authThunk';
 import { User } from './usersSlice';
 
 export interface AuthState {
@@ -80,6 +80,35 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.user = undefined;
+        
+        if (action.payload) {
+          state.message = action.payload;
+        }
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        
+        if (action.payload) {
+          state.message = action.payload;
+        }
+      })
+      .addCase(uploadProfilePicture.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(uploadProfilePicture.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(uploadProfilePicture.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
         
         if (action.payload) {
           state.message = action.payload;

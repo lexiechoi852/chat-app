@@ -23,7 +23,6 @@ export default function SideBar() {
     dispatch(fetchAllUsers())
 
   }, [])
-  
 
   return (
     <Box
@@ -43,7 +42,12 @@ export default function SideBar() {
         <TabList>
           { tabIndex === 0 && 
             <HStack w='full'>
-              <Avatar size='sm' name={user?.name} mr='auto' src='' />
+              <Avatar 
+                size='sm' 
+                mr='auto' 
+                name={user?.name} 
+                src={user?.profilePicture ? user?.profilePicture : ''}
+              />
               <Tab onClick={()=>setTabIndex(1)}>
                 <ChatIcon w={8} color='gray.900' />
               </Tab>

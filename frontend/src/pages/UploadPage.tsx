@@ -2,12 +2,17 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { Box, Button, FormControl, FormLabel, HStack, Input, VStack, Image, InputGroup, InputRightElement, useToast } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { uploadProfilePicture } from '../store/authThunk';
 
 export default function UploadPage() {
   const [image, setImage] = useState<File | undefined>(undefined);
   const [preview, setPreview] = useState<string>('default-single-icon.svg');
-  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
+
+  const { isLoading } =  useAppSelector((state) => state.auth);
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   
   const toast = useToast();
@@ -36,7 +41,6 @@ export default function UploadPage() {
   };
 
   const upload = async () => {
-    setLoading(true);
     if (!image) {
       toast({
         title: 'Please upload an image for profile picture.',
@@ -45,35 +49,21 @@ export default function UploadPage() {
         isClosable: true,
         position: 'bottom'
       });
-      setLoading(false);
     }
 
     if (image) {
-      const formData = new FormData();
-      formData.append('file', image);
-      formData.append('upload_preset', 'chat-app');
-      const url = process.env.REACT_APP_CLOUDINARY_URL;
-      
-      if (url) {
-        const data = await fetch(url, {
-          method: 'POST',
-          body: formData
+      const updatedUser = await dispatch(uploadProfilePicture(image));
+      if (updatedUser) {
+        toast({
+          title: 'Successfully upload profile picture.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom'
         });
-  
-        if (data) {
-          toast({
-            title: 'Successfully upload profile picture.',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-            position: 'bottom'
-          });
-          setLoading(false);
-          navigate('/');
-        }
+        navigate('/');
       }
     }
-
   };
 
   const reset = () => {
@@ -125,7 +115,7 @@ export default function UploadPage() {
               w={['full', 'auto']} 
               alignSelf='end' 
               onClick={()=>upload()}
-              isLoading={loading}
+              isLoading={isLoading}
             >
               Upload
             </Button>

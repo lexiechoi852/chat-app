@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { fetchAllUsers, searchUsers, updateUserProfile } from './usersThunk';
+import { fetchAllUsers, searchUsers } from './usersThunk';
 
 
 export interface User {
   name: string;
   email: string;
   password: string;
+  profilePicture: string;
   _id: string;
   _v: number;
   createdAt: Date,
@@ -53,20 +54,6 @@ export const usersSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
 
-      if (action.payload) {
-        state.message = action.payload;
-      }
-    })
-    .addCase(updateUserProfile.pending, (state) => {
-      state.isLoading = true;
-    })
-    .addCase(updateUserProfile.fulfilled, (state, action) => {
-      state.isLoading = false;
-    })
-    .addCase(updateUserProfile.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      
       if (action.payload) {
         state.message = action.payload;
       }
