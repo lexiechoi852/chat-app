@@ -1,4 +1,4 @@
-import { Box, FormControl, HStack, Image, Input } from '@chakra-ui/react'
+import { Box, FormControl, HStack, Image, Input, VStack } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { Chat } from '../store/chatsSlice';
@@ -32,7 +32,11 @@ export default function ChatBox() {
   
   useEffect(() => {
     if (process.env.REACT_APP_SOCKET_ENDPOINT) {
-      socket = io(process.env.REACT_APP_SOCKET_ENDPOINT);
+      socket = io(process.env.REACT_APP_SOCKET_ENDPOINT, {
+        extraHeaders: {
+          Authorization: `${localStorage.getItem('token')}`
+        }
+      });
       console.log(socket, 'socket');
     }
    
@@ -65,24 +69,26 @@ export default function ChatBox() {
       {
           currentChat 
           ? (
-            <HStack w='full' justifyContent='start'>
-              <Image 
-                boxSize='40px' 
-                src={currentChat.isGroupChat 
-                  ? 'default-group-icon.svg' 
-                  : 'default-single-icon.svg'}
-              />
-              <Box>
-                  {currentChat.isGroupChat ? currentChat.chatName : handleChatName(user, currentChat)}
-              </Box>
-              <FormControl onKeyDown={(e) => sendMessage(e)}>
+            <VStack w='full' h='100%'>
+              <HStack w='full' justifyContent='start'>
+                <Image
+                  boxSize='40px'
+                  src={currentChat.isGroupChat
+                    ? 'default-group-icon.svg'
+                    : 'default-single-icon.svg'}
+                />
+                <Box>
+                    {currentChat.isGroupChat ? currentChat.chatName : handleChatName(user, currentChat)}
+                </Box>
+              </HStack>
+              <FormControl mt='auto' onKeyDown={(e) => sendMessage(e)}>
                 <Input
                   placeholder='Send a message'
                   value={messageContent}
                   onChange={handleTyping}
                 />
               </FormControl>
-            </HStack>
+            </VStack>
           ) : (
           <Box>Default Chat</Box>
         )
