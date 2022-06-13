@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { Chat } from '../store/chatsSlice';
 import { User } from '../store/usersSlice';
+import io from 'socket.io-client';
 
 export default function ChatBox() {
   // const socket = useRef<any>();
+  let socket, selectedChatCompare;
   const [messageContent, setMessageContent] = useState('');
 
   const { currentChat } =  useAppSelector((state) => state.chats);
@@ -29,7 +31,10 @@ export default function ChatBox() {
   }
   
   useEffect(() => {
-    
+    if (process.env.REACT_APP_SOCKET_ENDPOINT) {
+      socket = io(process.env.REACT_APP_SOCKET_ENDPOINT);
+      console.log(socket, 'socket');
+    }
    
   }, [])
   
