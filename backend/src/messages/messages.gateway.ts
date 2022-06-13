@@ -1,3 +1,5 @@
+import { ChatsService } from './../chats/chats.service';
+import { JwtService } from '@nestjs/jwt';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -11,15 +13,14 @@ import {
 import { Server, Socket } from 'socket.io';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { Param, Request, UseGuards, Logger } from '@nestjs/common';
+import { Param, Request, Logger, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
-@UseGuards(JwtAuthGuard)
 export class MessagesGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -28,27 +29,51 @@ export class MessagesGateway
 
   private logger: Logger = new Logger('MessagesGateway');
 
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(
+    private messagesService: MessagesService,
+    private usersService: UsersService,
+    // private chatsService: ChatsService,
+    private jwtService: JwtService,
+  ) {}
 
   afterInit() {
     this.logger.log('Messages Gateway Initialized');
   }
 
-  handleConnection(client: Socket) {
-    this.logger.log(`Client connected: ${client.id}`);
-    this.logger.debug(
-      `No. of connected socket ${this.server.engine.clientsCount}`,
-    );
+  async handleConnection(client: Socket) {
+    try {
+      this.logger.log(`Client connected: ${client.id}`);
+      this.logger.debug(
+        `No. of connected socket ${this.server.engine.clientsCount}`,
+      );
+      const token = client.handshake.headers.authorization;
+
+      const data = await this.jwtService.verifyAsync(token);
+
+      const user = await this.usersService.findOneById(data.sub);
+
+      if (!user) {
+        return this.disconnect(client);
+      } else {
+        client.data.user = user;
+        console.log(user, 'user');
+
+        const rooms = 'Chats from chatsService';
+        return this.server.to(client.id).emit('rooms', rooms);
+      }
+    } catch (err) {
+      return this.disconnect(client);
+    }
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    client.disconnect();
   }
 
-  // @SubscribeMessage('msgToServer')
-  // handleMessage(client: Socket, text: string) {
-  //   return { event: 'msgToClient', data: text };
-  // }
+  private disconnect(client: Socket) {
+    client.emit('Error', new UnauthorizedException());
+    client.disconnect();
+  }
 
   @SubscribeMessage('createMessage')
   async create(
