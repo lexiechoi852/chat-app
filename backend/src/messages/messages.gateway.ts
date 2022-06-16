@@ -13,7 +13,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { Param, Request, Logger, UnauthorizedException } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway({
@@ -59,6 +59,7 @@ export class MessagesGateway
         console.log(user, 'user');
 
         const rooms = 'Chats from chatsService';
+        // this.chatsService.
         return this.server.to(client.id).emit('rooms', rooms);
       }
     } catch (err) {
@@ -77,20 +78,21 @@ export class MessagesGateway
 
   @SubscribeMessage('createMessage')
   async create(
-    @Request() req,
+    @ConnectedSocket() client: Socket,
     @MessageBody() createMessageDto: CreateMessageDto,
   ) {
     const message = await this.messagesService.create(
-      req.user.id,
+      client.data.user._id,
       createMessageDto,
     );
-    this.server.emit('message', message);
+    // this.server.to(client.id).emit('message', message);
     return message;
   }
 
   @SubscribeMessage('findAllMessages')
-  findAll(@Param('id') id: string) {
-    return this.messagesService.findAll(id);
+  findAll(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
+    const messages = this.messagesService.findAll(id);
+    return this.server.to(client.id).emit('messages', messages);
   }
 
   @SubscribeMessage('join')

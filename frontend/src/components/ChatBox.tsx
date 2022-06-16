@@ -1,18 +1,18 @@
 import { Box, FormControl, HStack, Image, Input, VStack } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { Chat } from '../store/chatsSlice';
 import { User } from '../store/usersSlice';
 import io from 'socket.io-client';
+import { Message } from '../store/messagesSlice';
 
 export default function ChatBox() {
-  // const socket = useRef<any>();
-  let socket, selectedChatCompare;
-  const [messageContent, setMessageContent] = useState('');
+  const socketRef = useRef<any>(null);
 
+  const [messageContent, setMessageContent] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
   const { currentChat } =  useAppSelector((state) => state.chats);
   const { user } =  useAppSelector((state) => state.auth);
-  const { messages, isLoading } =  useAppSelector((state) => state.messages);
 
   const dispatch = useAppDispatch();
 
@@ -32,13 +32,21 @@ export default function ChatBox() {
   
   useEffect(() => {
     if (process.env.REACT_APP_SOCKET_ENDPOINT) {
-      socket = io(process.env.REACT_APP_SOCKET_ENDPOINT, {
+      socketRef.current = io(process.env.REACT_APP_SOCKET_ENDPOINT, {
         extraHeaders: {
           Authorization: `${localStorage.getItem('token')}`
         }
       });
-      console.log(socket, 'socket');
+      if (currentChat) {
+        const {current: socket} = socketRef;
+        socket.emit('findAllMessages', currentChat._id, (messages: Message[]) => {
+          console.log(messages, 'messages')
+        })
+      }
+      
+      // if socket && current chat exists => join room with chatId
     }
+    return () => socketRef.current.disconnect();
    
   }, [])
   
@@ -48,11 +56,18 @@ export default function ChatBox() {
         content: messageContent,
         chatId: currentChat._id
       }
+      console.log(newMessage, 'newMessage')
+      const {current: socket} = socketRef;
+      socket.emit('createMessage', newMessage, (message: Message) => {
+        console.log(message, 'create message')
+        setMessages([...messages, message]);
+      })
+      setMessageContent('');
     }
   }
 
   const handleTyping = (e :React.ChangeEvent<HTMLInputElement>) => {
-
+    setMessageContent(e.target.value);
   }
 
   
@@ -81,6 +96,18 @@ export default function ChatBox() {
                     {currentChat.isGroupChat ? currentChat.chatName : handleChatName(user, currentChat)}
                 </Box>
               </HStack>
+              <VStack w='100%' h='100%'>
+                  {
+                    messages 
+                    ? messages.map((message, index) => (
+                      <VStack key={index}>
+                        <Box>{message.content}</Box>
+                        <Box>{message.sender.name}</Box>
+                      </VStack>
+                    ))
+                    : <>No Messages</>
+                  }
+              </VStack>
               <FormControl mt='auto' onKeyDown={(e) => sendMessage(e)}>
                 <Input
                   placeholder='Send a message'
