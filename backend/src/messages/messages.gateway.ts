@@ -92,7 +92,7 @@ export class MessagesGateway
   @SubscribeMessage('findAllMessages')
   findAll(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
     const messages = this.messagesService.findAll(id);
-    return this.server.to(client.id).emit('messages', messages);
+    return messages;
   }
 
   @SubscribeMessage('join')

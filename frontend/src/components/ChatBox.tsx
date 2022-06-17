@@ -5,6 +5,8 @@ import { Chat } from '../store/chatsSlice';
 import { User } from '../store/usersSlice';
 import io from 'socket.io-client';
 import { Message } from '../store/messagesSlice';
+import SingleMessage from './SingleMessage';
+import GroupMessage from './GroupMessage';
 
 export default function ChatBox() {
   const socketRef = useRef<any>(null);
@@ -37,18 +39,19 @@ export default function ChatBox() {
           Authorization: `${localStorage.getItem('token')}`
         }
       });
-      if (currentChat) {
-        const {current: socket} = socketRef;
-        socket.emit('findAllMessages', currentChat._id, (messages: Message[]) => {
-          console.log(messages, 'messages')
-        })
-      }
-      
-      // if socket && current chat exists => join room with chatId
     }
     return () => socketRef.current.disconnect();
    
   }, [])
+
+  useEffect(() => {
+    if (currentChat) {
+      const {current: socket} = socketRef;
+      socket.emit('findAllMessages', currentChat._id, (messages: Message[]) => {
+        setMessages(messages);
+      })
+    }
+  }, [currentChat])
   
   const sendMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' && messageContent && currentChat) {
@@ -59,7 +62,6 @@ export default function ChatBox() {
       console.log(newMessage, 'newMessage')
       const {current: socket} = socketRef;
       socket.emit('createMessage', newMessage, (message: Message) => {
-        console.log(message, 'create message')
         setMessages([...messages, message]);
       })
       setMessageContent('');
@@ -98,12 +100,15 @@ export default function ChatBox() {
               </HStack>
               <VStack w='100%' h='100%'>
                   {
-                    messages 
+                    messages && messages.length > 0
                     ? messages.map((message, index) => (
-                      <VStack key={index}>
-                        <Box>{message.content}</Box>
-                        <Box>{message.sender.name}</Box>
-                      </VStack>
+                      <Box key={index} w='100%'>
+                      {
+                        currentChat.isGroupChat
+                        ? <GroupMessage chat={currentChat} message={message} user={user} />
+                        : <SingleMessage chat={currentChat} message={message} user={user} />
+                      }
+                      </Box>
                     ))
                     : <>No Messages</>
                   }
