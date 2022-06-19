@@ -57,10 +57,6 @@ export class MessagesGateway
       } else {
         client.data.user = user;
         console.log(user, 'user');
-
-        const rooms = 'Chats from chatsService';
-        // this.chatsService.
-        return this.server.to(client.id).emit('rooms', rooms);
       }
     } catch (err) {
       return this.disconnect(client);
@@ -85,22 +81,23 @@ export class MessagesGateway
       client.data.user._id,
       createMessageDto,
     );
-    // this.server.to(client.id).emit('message', message);
-    return message;
+    this.server.to(createMessageDto.chatId).emit('newMessage', message);
   }
 
   @SubscribeMessage('findAllMessages')
-  findAll(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
+  findAll(@MessageBody() id: string) {
     const messages = this.messagesService.findAll(id);
     return messages;
   }
 
-  @SubscribeMessage('join')
-  joinRoom(
-    @MessageBody('name') name: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    return this.messagesService.join(name, client.id);
+  @SubscribeMessage('joinRoom')
+  joinRoom(@ConnectedSocket() client: Socket, @MessageBody() chatId: string) {
+    client.join(chatId);
+  }
+
+  @SubscribeMessage('leaveRoom')
+  leaveRoom(@ConnectedSocket() client: Socket, @MessageBody() chatId: string) {
+    client.leave(chatId);
   }
 
   @SubscribeMessage('typing')
@@ -108,7 +105,7 @@ export class MessagesGateway
     @MessageBody('isTyping') isTyping: boolean,
     @ConnectedSocket() client: Socket,
   ) {
-    const name = await this.messagesService.getClientName(client.id);
-    client.broadcast.emit('typing', { name, isTyping });
+    // const name = await this.messagesService.getClientName(client.id);
+    // client.broadcast.emit('typing', { name, isTyping });
   }
 }

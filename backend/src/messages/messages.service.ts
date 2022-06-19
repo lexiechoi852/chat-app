@@ -51,12 +51,4 @@ export class MessagesService {
 
     return messages;
   }
-
-  join(name: string, client: string) {
-    //  Get user name
-  }
-
-  getClientName(client: string) {
-    // Helper function: Get client name
-  }
 }

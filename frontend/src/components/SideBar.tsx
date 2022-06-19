@@ -41,7 +41,7 @@ export default function SideBar() {
       >
         <TabList>
           { tabIndex === 0 && 
-            <HStack w='full'>
+            <HStack w='full' mb={2}>
               <Avatar 
                 size='sm' 
                 mr='auto' 
@@ -49,7 +49,7 @@ export default function SideBar() {
                 src={user?.profilePicture ? user?.profilePicture : ''}
               />
               <Tab onClick={()=>setTabIndex(1)}>
-                <ChatIcon w={8} color='gray.900' />
+                <ChatIcon boxSize={5} color='gray.900' />
               </Tab>
             </HStack>
           }

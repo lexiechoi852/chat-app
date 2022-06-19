@@ -39,14 +39,8 @@ export const chatsSlice = createSlice({
       state.isError = false;
       state.message = '';
     },
-    setCurrentChat: (state, action) => {
-      if (state.chats && state.chats.length > 0) {
-        const chat = state.chats.find(chat => chat._id === action.payload);
-
-        if (chat) {
-          state.currentChat = chat;
-        }
-      }
+    resetCurrentChat: (state) => {
+      state.currentChat = undefined;
     }
   },
   extraReducers: (builder) => {
@@ -114,6 +108,6 @@ export const chatsSlice = createSlice({
   }
 })
 
-export const { reset, setCurrentChat } = chatsSlice.actions
+export const { reset, resetCurrentChat } = chatsSlice.actions
 
 export default chatsSlice.reducer

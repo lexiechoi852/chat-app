@@ -1,16 +1,16 @@
 import { Box, FormControl, HStack, Image, Input, VStack } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { Chat } from '../store/chatsSlice';
+import { Chat, resetCurrentChat } from '../store/chatsSlice';
 import { User } from '../store/usersSlice';
 import io from 'socket.io-client';
 import { Message } from '../store/messagesSlice';
 import SingleMessage from './SingleMessage';
 import GroupMessage from './GroupMessage';
+import { ChevronLeftIcon } from '@chakra-ui/icons';
 
 export default function ChatBox() {
   const socketRef = useRef<any>(null);
-
   const [messageContent, setMessageContent] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const { currentChat } =  useAppSelector((state) => state.chats);
@@ -31,6 +31,10 @@ export default function ChatBox() {
       return chat.chatName;
     }
   }
+
+  const scrollToLatestMessage = () => {
+
+  }
   
   useEffect(() => {
     if (process.env.REACT_APP_SOCKET_ENDPOINT) {
@@ -40,18 +44,32 @@ export default function ChatBox() {
         }
       });
     }
-    return () => socketRef.current.disconnect();
-   
   }, [])
 
   useEffect(() => {
     if (currentChat) {
       const {current: socket} = socketRef;
+      socket.emit('joinRoom', currentChat._id);
+
       socket.emit('findAllMessages', currentChat._id, (messages: Message[]) => {
+        console.log(messages, 'messages')
         setMessages(messages);
       })
+
+      socket.on('newMessage', (message: Message) => {
+        console.log(message, 'react newMessage')
+        setMessages(messages => [...messages, message])
+      })
+      return () => {
+        console.log(`leave current room ${currentChat._id}`)
+        socket.emit('leaveRoom', currentChat._id);
+      }
     }
   }, [currentChat])
+
+  useEffect(() => {
+    scrollToLatestMessage()
+  }, [messages])
   
   const sendMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' && messageContent && currentChat) {
@@ -79,6 +97,7 @@ export default function ChatBox() {
       flexDir='column'
       alignItems='center'
       justifyContent='start'
+      overflow='hidden'
       w='full'
       h='100vh'
       p={4}
@@ -88,6 +107,12 @@ export default function ChatBox() {
           ? (
             <VStack w='full' h='100%'>
               <HStack w='full' justifyContent='start'>
+                <ChevronLeftIcon 
+                  display={{ base: 'flex', md: 'none' }}
+                  boxSize={6}
+                  cursor='pointer'
+                  onClick={() => dispatch(resetCurrentChat())}
+                />
                 <Image
                   boxSize='40px'
                   src={currentChat.isGroupChat
@@ -98,7 +123,7 @@ export default function ChatBox() {
                     {currentChat.isGroupChat ? currentChat.chatName : handleChatName(user, currentChat)}
                 </Box>
               </HStack>
-              <VStack w='100%' h='100%'>
+              <VStack w='100%' h='100%' overflow='auto'>
                   {
                     messages && messages.length > 0
                     ? messages.map((message, index) => (
