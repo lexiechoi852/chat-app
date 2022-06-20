@@ -1,4 +1,3 @@
-import { ChatsService } from './../chats/chats.service';
 import { JwtService } from '@nestjs/jwt';
 import {
   WebSocketGateway,

@@ -17,18 +17,33 @@ export default function GroupMessage({ chat, message, user }: GroupMessageProps)
         message.sender._id === user?._id
         ? (
           <VStack
-            alignItems='start'
+            w='100%'
+            p={2}
+            alignItems='end'
+
           >
-            <Box>{message.sender.name}</Box>
-            <Box>{message.content}</Box>
+            <Box
+              p={2}
+              borderWidth='1px'
+              borderRadius='lg'
+            >
+              {message.content}
+            </Box>
           </VStack>
         )
         : (
-          <VStack
-            alignItems='end'
+          <VStack 
+            w='100%'
+            alignItems='start'
           >
-            <Box>{message.sender.name}</Box>
-            <Box>{message.content}</Box>
+            <Box
+              p={2}
+              borderWidth='1px'
+              borderRadius='lg'
+            >
+              <Box>{message.sender.name}</Box>
+              <Box>{message.content}</Box>
+            </Box>
           </VStack>
         )
       }

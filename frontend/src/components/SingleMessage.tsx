@@ -23,20 +23,31 @@ export default function SingleMessage({ chat, message, user }: SingleMessageProp
         ? (
           <VStack
             w='100%'
-            p={3}
+            p={2}
             alignItems='end'
-            borderWidth='1px'
-            borderRadius='lg'
+
           >
-            <Box>{message.content}</Box>
-            <Box></Box>
+            <Box
+              p={2}
+              borderWidth='1px'
+              borderRadius='lg'
+            >
+              {message.content}
+            </Box>
           </VStack>
         )
         : (
           <VStack 
-            
+            w='100%'
+            alignItems='start'
           >
-            <Box>{message.content}</Box>
+            <Box
+              p={2}
+              borderWidth='1px'
+              borderRadius='lg'
+            >
+              {message.content}
+            </Box>
           </VStack>
         )
       }
