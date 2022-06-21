@@ -27,7 +27,13 @@ export default function NewChat({ users, chats, currentUser }: NewChatProps) {
     <VStack mt={4} maxH='100vh' overflowY='auto'>
       <Box w='full'>
         <HStack 
-          padding={2} 
+          padding={2}
+          borderWidth='1px'
+          borderRadius='lg'
+          cursor='pointer'
+          _hover={{
+            background: '#f1f5f9'
+          }}
           onClick={createGroupChat}
         >
           <Image boxSize='40px' mr={2} src='default-group-icon.svg'/>

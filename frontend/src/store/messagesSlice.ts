@@ -8,6 +8,7 @@ export interface Message {
   sender: User;
   content: string;
   chat: Chat;
+  createdAt: Date
 }
 
 export interface MessageState {

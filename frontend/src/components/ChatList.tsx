@@ -1,4 +1,4 @@
-import { VStack, Box, Image, HStack } from '@chakra-ui/react'
+import { VStack, Box, Image, HStack, Avatar } from '@chakra-ui/react'
 import React from 'react'
 import { useAppDispatch } from '../hooks';
 import { Chat } from '../store/chatsSlice'
@@ -18,18 +18,9 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
     dispatch(fetchChatById(chatId));
   }
 
-  const handleChatName = (currentUser: User | undefined, chat: Chat) => {
-    if (!currentUser) {
-      return;
-    }
-
-    const user = chat.users.find(user => currentUser._id !== user._id);
-    console.log(user, 'handleChatName')
-    if (user) {
-      return user.name;
-    } else {
-      return chat.chatName;
-    }
+  const getOtherUser = (chat: Chat, currentUser: User) => {
+    const user = chat.users.filter(user => user._id !== currentUser._id);
+    return user[0];
   }
 
   // console.log(chats, 'chats')
@@ -44,20 +35,30 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
           borderRadius='lg'
           overflow='hidden'
           cursor='pointer'
+          _hover={{
+            background: '#f1f5f9'
+          }}
           onClick={() => fetchChat(chat._id)}
         >
           <HStack>
-          <Image 
-            boxSize='48px' 
-            src={chat.isGroupChat 
-              ? 'default-group-icon.svg' 
-              : 'default-single-icon.svg'}
-          />
-        
+            {
+              chat.isGroupChat 
+              ? (
+                <Image
+                  boxSize='40px'
+                  src='default-group-icon.svg'
+                />
+              ) : (
+                <Avatar 
+                  boxSize='40px'
+                  name={getOtherUser(chat, currentUser!).name} 
+                  src={getOtherUser(chat, currentUser!)?.profilePicture ? getOtherUser(chat, currentUser!)?.profilePicture : ''}
+                />
+              )
+            }
             <Box>
-              {chat.isGroupChat ? chat.chatName : handleChatName(currentUser, chat)}
+                {chat.isGroupChat ? chat.chatName : getOtherUser(chat, currentUser!)?.name}
             </Box>
-            
           </HStack>
         </Box>
       )}

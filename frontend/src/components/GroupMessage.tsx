@@ -1,4 +1,4 @@
-import { Box, VStack } from '@chakra-ui/react'
+import { Box, HStack, VStack, Text } from '@chakra-ui/react'
 import React from 'react'
 import { Chat } from '../store/chatsSlice'
 import { Message } from '../store/messagesSlice'
@@ -22,13 +22,21 @@ export default function GroupMessage({ chat, message, user }: GroupMessageProps)
             alignItems='end'
 
           >
-            <Box
-              p={2}
+            <HStack
               borderWidth='1px'
               borderRadius='lg'
             >
-              {message.content}
-            </Box>
+              <Box py={2} pr={1} pl={2}>{message.content}</Box>
+              <Text
+                color='gray.600'
+                alignSelf='flex-end' 
+                fontSize='xs' 
+                py={1} 
+                pr={1}
+              >
+                {new Date(message.createdAt).toLocaleString([], {hour: '2-digit', minute:'2-digit'})}
+              </Text>
+            </HStack>
           </VStack>
         )
         : (
@@ -37,12 +45,32 @@ export default function GroupMessage({ chat, message, user }: GroupMessageProps)
             alignItems='start'
           >
             <Box
-              p={2}
+              display='flex'
+              flexDirection='column'
               borderWidth='1px'
               borderRadius='lg'
             >
-              <Box>{message.sender.name}</Box>
-              <Box>{message.content}</Box>
+              <Text 
+                pt={1} 
+                pl={2} 
+                fontSize='xs'
+                alignSelf='flex-start'
+                color='gray.600'
+              >
+                {message.sender.name}
+              </Text>
+              <HStack>
+                <Box pb={2} pr={1} pl={2}>{message.content}</Box>
+                <Text 
+                  color='gray.600'
+                  alignSelf='flex-end' 
+                  fontSize='xs' 
+                  py={1} 
+                  pr={1}
+                >
+                  {new Date(message.createdAt).toLocaleString([], {hour: '2-digit', minute:'2-digit'})}
+                </Text>
+              </HStack>
             </Box>
           </VStack>
         )

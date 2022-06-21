@@ -1,4 +1,4 @@
-import { Box, VStack } from '@chakra-ui/react'
+import { Box, VStack, Text, HStack } from '@chakra-ui/react'
 import React from 'react'
 import { Chat } from '../store/chatsSlice'
 import { Message } from '../store/messagesSlice'
@@ -8,11 +8,6 @@ interface SingleMessageProps {
   chat: Chat,
   message: Message,
   user?: User
-}
-
-const getOtherUser = (chat: Chat, currentUser: User) => {
-  const user = chat.users.filter(user => user._id !== currentUser._id);
-  return user[0];
 }
 
 export default function SingleMessage({ chat, message, user }: SingleMessageProps) {
@@ -27,13 +22,21 @@ export default function SingleMessage({ chat, message, user }: SingleMessageProp
             alignItems='end'
 
           >
-            <Box
-              p={2}
+            <HStack
               borderWidth='1px'
               borderRadius='lg'
             >
-              {message.content}
-            </Box>
+              <Box py={2} pr={1} pl={2}>{message.content}</Box>
+              <Text
+                color='gray.600'
+                alignSelf='flex-end' 
+                fontSize='xs' 
+                py={1} 
+                pr={1}
+              >
+                {new Date(message.createdAt).toLocaleString([], {hour: '2-digit', minute:'2-digit'})}
+              </Text>
+            </HStack>
           </VStack>
         )
         : (
@@ -41,16 +44,24 @@ export default function SingleMessage({ chat, message, user }: SingleMessageProp
             w='100%'
             alignItems='start'
           >
-            <Box
-              p={2}
+            <HStack
               borderWidth='1px'
               borderRadius='lg'
             >
-              {message.content}
-            </Box>
+              <Box py={2} pr={1} pl={2}>{message.content}</Box>
+              <Text 
+                color='gray.600'
+                alignSelf='flex-end' 
+                fontSize='xs' 
+                py={1} 
+                pr={1}
+              >
+                {new Date(message.createdAt).toLocaleString([], {hour: '2-digit', minute:'2-digit'})}
+              </Text>
+            </HStack>
           </VStack>
         )
       }
-  </VStack>
+    </VStack>
   )
 }

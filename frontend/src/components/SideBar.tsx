@@ -54,7 +54,7 @@ export default function SideBar() {
             </HStack>
           }
           { tabIndex === 1 && 
-            <HStack>
+            <HStack mb={2}>
               <Tab onClick={()=>setTabIndex(0)}>
                 <ArrowBackIcon color='gray.900' />
               </Tab>

@@ -1,4 +1,4 @@
-import { Box, FormControl, HStack, Image, Input, VStack } from '@chakra-ui/react'
+import { Avatar, Box, FormControl, HStack, Image, Input, VStack } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { Chat, resetCurrentChat } from '../store/chatsSlice';
@@ -18,22 +18,13 @@ export default function ChatBox() {
 
   const dispatch = useAppDispatch();
 
-  const handleChatName = (currentUser: User | undefined, chat: Chat) => {
-    if (!currentUser) {
-      return;
-    }
-
-    const user = chat.users.find(user => currentUser._id !== user._id);
-
-    if (user) {
-      return user.name;
-    } else {
-      return chat.chatName;
-    }
-  }
-
   const scrollToLatestMessage = () => {
 
+  }
+
+  const getOtherUser = (chat: Chat, currentUser: User) => {
+    const user = chat.users.filter(user => user._id !== currentUser._id);
+    return user[0];
   }
   
   useEffect(() => {
@@ -43,6 +34,10 @@ export default function ChatBox() {
           Authorization: `${localStorage.getItem('token')}`
         }
       });
+    }
+    return () => {
+      console.log('Socket Disconnect')
+      socketRef.current.disconnect();
     }
   }, [])
 
@@ -113,14 +108,24 @@ export default function ChatBox() {
                   cursor='pointer'
                   onClick={() => dispatch(resetCurrentChat())}
                 />
-                <Image
-                  boxSize='40px'
-                  src={currentChat.isGroupChat
-                    ? 'default-group-icon.svg'
-                    : 'default-single-icon.svg'}
-                />
+                {
+                  currentChat.isGroupChat 
+                  ? (
+                    <Image
+                      boxSize='40px'
+                      src='default-group-icon.svg'
+                    />
+                  ) : (
+                    <Avatar 
+                      size='sm' 
+                      mr='auto' 
+                      name={getOtherUser(currentChat, user!).name} 
+                      src={getOtherUser(currentChat, user!)?.profilePicture ? getOtherUser(currentChat, user!)?.profilePicture : ''}
+                    />
+                  )
+                }
                 <Box>
-                    {currentChat.isGroupChat ? currentChat.chatName : handleChatName(user, currentChat)}
+                    {currentChat.isGroupChat ? currentChat.chatName : getOtherUser(currentChat, user!)?.name}
                 </Box>
               </HStack>
               <VStack w='100%' h='100%' overflow='auto'>
