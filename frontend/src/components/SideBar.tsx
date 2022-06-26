@@ -2,7 +2,6 @@ import { ArrowBackIcon, ChatIcon } from '@chakra-ui/icons'
 import { Box, Text, Tab, TabList, TabPanel, TabPanels, Tabs, HStack, Avatar } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { getInfo } from '../store/authThunk'
 import { fetchAllChats } from '../store/chatsThunk'
 import { fetchAllUsers } from '../store/usersThunk'
 import ChatList from './ChatList'
@@ -18,10 +17,8 @@ export default function SideBar() {
   const { chats, currentChat } =  useAppSelector((state) => state.chats);
 
   useEffect(() => {
-    dispatch(getInfo());
-    dispatch(fetchAllChats())
-    dispatch(fetchAllUsers())
-
+    dispatch(fetchAllChats());
+    dispatch(fetchAllUsers());
   }, [])
 
   return (

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { reset } from '../store/authSlice';
-import { login } from '../store/authThunk';
+import { getInfo, login } from '../store/authThunk';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { isAuth, isLoading, isError, message } = useAppSelector((state) => state.auth);
+  const { user, isAuth ,isLoading, isError, message } = useAppSelector((state) => state.auth);
 
   const submit = () => {
     if (!email || !password) {
@@ -46,19 +46,23 @@ export default function LoginPage() {
     }
 
     if (isAuth) {
-      toast({
-        title: 'Login Success',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom'
-      })
-      navigate('/');
+      dispatch(getInfo());
+
+      if (user) {
+        toast({
+          title: 'Login Success',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom'
+        })
+        navigate('/');
+      }
     }
 
     dispatch(reset());
 
-  }, [isAuth, isError, message, navigate, dispatch])
+  }, [user, isAuth, isError, message, navigate, dispatch])
   
   return (
     <Box
