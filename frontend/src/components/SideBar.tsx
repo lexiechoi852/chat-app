@@ -1,5 +1,5 @@
 import { ArrowBackIcon, ChatIcon } from '@chakra-ui/icons'
-import { Box, Text, Tab, TabList, TabPanel, TabPanels, Tabs, HStack, Avatar } from '@chakra-ui/react'
+import { Box, Text, Tab, TabList, TabPanel, TabPanels, Tabs, HStack, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverCloseButton, PopoverHeader } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { fetchAllChats } from '../store/chatsThunk'
@@ -39,12 +39,35 @@ export default function SideBar() {
         <TabList>
           { tabIndex === 0 && 
             <HStack w='full' mb={2}>
-              <Avatar 
-                size='sm' 
-                mr='auto' 
-                name={user?.name} 
-                src={user?.profilePicture ? user?.profilePicture : ''}
-              />
+              <Popover>
+                <PopoverTrigger>
+                <Avatar 
+                  size='sm'
+                  mr='auto'
+                  cursor='pointer'
+                  name={user?.name} 
+                  src={user?.profilePicture ? user?.profilePicture : ''}
+                />
+                </PopoverTrigger>
+                <PopoverContent ml={4}>
+                  <PopoverCloseButton />
+                  <PopoverHeader>
+                    <HStack>
+                      <Avatar 
+                        size='md'
+                        cursor='pointer'
+                        name={user?.name} 
+                        src={user?.profilePicture ? user?.profilePicture : ''}
+                      />
+                      <Box display='flex' flexDirection='column' alignItems='flex-start'>
+                        <Box fontWeight='bold'>{user?.name}</Box>
+                        <Box fontSize='xs'>{user?.email}</Box>
+                      </Box>
+                    </HStack>
+                  </PopoverHeader>
+                </PopoverContent>
+              </Popover>
+
               <Tab onClick={()=>setTabIndex(1)}>
                 <ChatIcon boxSize={5} color='gray.900' />
               </Tab>
