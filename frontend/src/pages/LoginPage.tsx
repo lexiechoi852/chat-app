@@ -45,19 +45,19 @@ export default function LoginPage() {
       });
     }
 
-    if (isAuth) {
+    if (isAuth && !user) {
       dispatch(getInfo());
-
-      if (user) {
-        toast({
-          title: 'Login Success',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-          position: 'bottom'
-        })
-        navigate('/');
-      }
+    }
+    
+    if (user) {
+      toast({
+        title: 'Login Success',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      })
+      navigate('/');
     }
 
     dispatch(reset());
