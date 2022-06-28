@@ -8,13 +8,14 @@ import { fetchAllUsers } from '../store/usersThunk'
 import ChatList from './ChatList'
 import NewChat from './NewChat'
 import Search from './Search'
+import SearchResult from './SearchResult'
 
 export default function SideBar() {
   const [tabIndex, setTabIndex] = useState(0);
 
   const dispatch = useAppDispatch();
   const { user } =  useAppSelector((state) => state.auth);
-  const { users } =  useAppSelector((state) => state.users);
+  const { users, searchText } =  useAppSelector((state) => state.users);
   const { chats, currentChat } =  useAppSelector((state) => state.chats);
 
   useEffect(() => {
@@ -94,7 +95,11 @@ export default function SideBar() {
           </TabPanel>
           <TabPanel p={0}>
             <Search mode='new-chat' />
-            <NewChat users={users} chats={chats} currentUser={user} />
+            {
+              searchText
+              ? <SearchResult />
+              : <NewChat users={users} chats={chats} currentUser={user} />
+            }
           </TabPanel>
         </TabPanels>
       </Tabs>

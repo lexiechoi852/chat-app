@@ -39,6 +39,9 @@ export const usersSlice = createSlice({
       state.isLoading = false;
       state.isError = false;
       state.message = '';
+    },
+    setSearchText: (state, action) => {
+        state.searchText = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -76,6 +79,6 @@ export const usersSlice = createSlice({
   }
 })
 
-export const { reset } = usersSlice.actions
+export const { reset, setSearchText } = usersSlice.actions
 
 export default usersSlice.reducer

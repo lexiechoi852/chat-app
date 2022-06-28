@@ -1,9 +1,10 @@
 import { SearchIcon } from '@chakra-ui/icons'
-import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import { Box, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 import React, { useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { searchUsers } from '../store/usersThunk'
 import { debounce } from 'lodash-es'
+import { setSearchText } from '../store/usersSlice'
 
 interface SearchProps {
     mode: string
@@ -15,11 +16,20 @@ export default function Search({ mode }: SearchProps) {
   const { searchText } =  useAppSelector((state) => state.users);
 
   const handleSearch = (search: string) => {
-    if (!search || searchText === search) {
+    if (!search) {
+      dispatch(setSearchText(''));
+    }
+    
+    if (searchText === search) {
       return;
     }
+
     console.log(search, 'search')
-    
+
+    if (mode === 'new-chat') {
+      dispatch(setSearchText(search));
+    }
+
     dispatch(searchUsers(search));
   }
 
@@ -31,14 +41,14 @@ export default function Search({ mode }: SearchProps) {
 
   return (
     <InputGroup>
-        <InputLeftElement>
-            <SearchIcon />
-        </InputLeftElement>
-        <Input
-          variant='filled'
-          placeholder='Search' 
-          onChange={(e) => debouncedSearch(e.target.value)}
-        />
-  </InputGroup>
+      <InputLeftElement>
+          <SearchIcon />
+      </InputLeftElement>
+      <Input
+        variant='filled'
+        placeholder='Search'
+        onChange={(e) => debouncedSearch(e.target.value)}
+      />
+    </InputGroup>
   )
 }
