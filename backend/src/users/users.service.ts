@@ -40,8 +40,12 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
-    const users = await this.userModel.find().exec();
+  async findAll(userId: string): Promise<User[]> {
+    const users = await this.userModel
+      .find()
+      .where('_id')
+      .ne({ _id: userId })
+      .exec();
     return users;
   }
 
