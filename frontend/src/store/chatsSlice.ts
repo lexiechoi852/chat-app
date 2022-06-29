@@ -82,6 +82,7 @@ export const chatsSlice = createSlice({
       .addCase(createSingleChat.fulfilled, (state, action) => {
         state.isLoading = false;
         state.chats = [...state.chats, action.payload];
+        state.currentChat = action.payload;
       })
       .addCase(createSingleChat.rejected, (state, action) => {
         state.isLoading = false;

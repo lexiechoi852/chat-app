@@ -4,12 +4,7 @@ import { Chat } from "./chatsSlice";
 
 const API_BASE_URL = '/api/chats';
 
-export interface CreateSingleChatAttributes {
-    chatName: string,
-    userId: string
-}
-
-interface CreateGroupChatAttributes {
+export interface CreateGroupChatAttributes {
     chatName: string,
     userIds: string[]
 }
@@ -54,19 +49,18 @@ export const fetchChatById = createAsyncThunk<Chat, string, { rejectValue: strin
     }
 )
 
-export const createSingleChat = createAsyncThunk<Chat, CreateSingleChatAttributes, { rejectValue: string }>(
-    ('chats/createSingle'), async (newChat, thunkAPI) => {
+export const createSingleChat = createAsyncThunk<Chat, string, { rejectValue: string }>(
+    ('chats/createSingle'), async (userId, thunkAPI) => {
         try {
             const res = await axios.post(`${API_BASE_URL}/single`, {
-                body: {
-                    chatName: newChat.chatName,
-                    userIds: newChat.userId
-                },
+                chatName: 'New Single Chat',
+                userId
+            }, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
                 }
             });
-        
             return res.data;
         } catch (err) {
             if (err instanceof AxiosError) {

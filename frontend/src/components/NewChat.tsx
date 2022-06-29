@@ -2,8 +2,8 @@ import { Box, HStack, Image, VStack, Text, Avatar } from '@chakra-ui/react'
 import React from 'react'
 import { useAppDispatch } from '../hooks';
 import { Chat } from '../store/chatsSlice';
-import { createSingleChat, createGroupChat, CreateSingleChatAttributes } from '../store/chatsThunk';
-import { User } from '../store/usersSlice'
+import { createSingleChat, createGroupChat, CreateGroupChatAttributes } from '../store/chatsThunk';
+import { User } from '../store/usersSlice';
 
 interface NewChatProps {
   users: User[];
@@ -12,16 +12,7 @@ interface NewChatProps {
 }
 
 export default function NewChat({ users, chats, currentUser }: NewChatProps) {
-
   const dispatch = useAppDispatch();
-  
-  const createGroupChat = () => {
-
-  }
-  
-  const handleChat = (user: User) => {
-
-  }
 
   return (
     <VStack mt={4} maxH='100vh' overflowY='auto'>
@@ -34,7 +25,7 @@ export default function NewChat({ users, chats, currentUser }: NewChatProps) {
           _hover={{
             background: '#f1f5f9'
           }}
-          onClick={createGroupChat}
+          // onClick={createGroupChat}
         >
           <Image boxSize='40px' mr={2} src='default-group-icon.svg'/>
           <Text>New Group</Text>
@@ -52,7 +43,7 @@ export default function NewChat({ users, chats, currentUser }: NewChatProps) {
           _hover={{
             background: '#f1f5f9'
           }}
-          onClick={() => handleChat(user)}
+          onClick={() => dispatch(createSingleChat(user._id))}
         >
           <Avatar boxSize='40px' name={user.name} mr={2} src='' />
           <Text>{user.name}</Text>
