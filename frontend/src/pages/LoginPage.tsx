@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputRightElement,VStack, Text, useToast, HStack, Heading, Image } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { reset } from '../store/authSlice';
 import { getInfo, login } from '../store/authThunk';
@@ -109,6 +109,12 @@ export default function LoginPage() {
         >
             Login
         </Button>
+        <Box display='flex' w='100%' justifyContent='center'>
+          <Text mr={1}>Don't have an account?</Text>
+          <Text color='blue.500'>
+            <Link to="/signup">Sign Up Now</Link>
+          </Text>
+        </Box>
       </VStack>
     </Box>
   )
