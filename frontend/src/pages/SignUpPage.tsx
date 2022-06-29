@@ -17,7 +17,7 @@ export default function SignUpPage() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
   
-    const { user, isLoading, isError, message } = useAppSelector((state) => state.auth);
+    const { isRegisterSuccess, isLoading, isError, message } = useAppSelector((state) => state.auth);
   
     const submit = () => {
       if (password !== confirmPassword) {
@@ -49,7 +49,7 @@ export default function SignUpPage() {
         });
       }
   
-      if (user) {
+      if (isRegisterSuccess) {
         toast({
           title: 'Registration Success',
           status: 'success',
@@ -62,7 +62,7 @@ export default function SignUpPage() {
   
       dispatch(reset());
   
-    }, [user, isError, message, navigate, dispatch])
+    }, [isRegisterSuccess, isError, message, navigate, dispatch])
     
   return (
     <Box
