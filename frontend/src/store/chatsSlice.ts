@@ -1,12 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createGroupChat, createSingleChat, fetchAllChats, fetchChatById } from './chatsThunk';
+import { Message } from './messagesSlice';
 import { User } from './usersSlice';
 
 export interface Chat {
   chatName: string;
   isGroupChat: boolean;
   users: User[];
-  latestMessage: any;
+  latestMessage: Message;
   groupAdmin?: User;
   _id: string;
   _v: number;

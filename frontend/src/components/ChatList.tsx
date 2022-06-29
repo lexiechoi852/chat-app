@@ -1,5 +1,5 @@
-import { VStack, Box, Image, HStack, Avatar } from '@chakra-ui/react'
-import React from 'react'
+import { VStack, Box, Image, HStack, Avatar, Text } from '@chakra-ui/react'
+import React, { useEffect } from 'react'
 import { useAppDispatch } from '../hooks';
 import { Chat } from '../store/chatsSlice'
 import { fetchChatById } from '../store/chatsThunk';
@@ -23,7 +23,10 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
     return user[0];
   }
 
-  // console.log(chats, 'chats')
+  useEffect(() => {
+
+  }, [chats])
+
   return (
     <VStack mt={4}>
       {chats && chats.map((chat, i) => 
@@ -56,8 +59,25 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
                 />
               )
             }
-            <Box>
-                {chat.isGroupChat ? chat.chatName : getOtherUser(chat, currentUser!)?.name}
+            <Box display='flex' flexDirection='column'>
+              <Box>
+                  {chat.isGroupChat ? chat.chatName : getOtherUser(chat, currentUser!)?.name}
+              </Box>
+              {
+                chat.latestMessage && chat.isGroupChat && 
+                <Box display='flex' fontSize='xs' color='gray.500'>
+                  {
+                    currentUser && chat.latestMessage.sender._id === currentUser._id 
+                    ? <Text fontWeight={600} mr={1}>You:</Text>
+                    : <Text fontWeight={600} mr={1}>{chat.latestMessage.sender.name}:</Text>
+                  }
+                  <Text noOfLines={1}>{chat.latestMessage.content}</Text>
+                </Box>
+              }
+              {
+                chat.latestMessage && !chat.isGroupChat &&
+                <Text noOfLines={1} fontSize='xs' color='gray.500'>{chat.latestMessage.content}</Text>
+              }
             </Box>
           </HStack>
         </Box>
