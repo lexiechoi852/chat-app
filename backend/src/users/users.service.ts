@@ -33,8 +33,8 @@ export class UsersService {
         password: hashedPassword,
         profilePicture,
       });
-
-      return newUser;
+      const user = this.findOneById(newUser._id);
+      return user;
     } catch (err) {
       throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
     }
@@ -93,7 +93,10 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    const user = await this.userModel.findOne({ email }).exec();
+    const user = await this.userModel
+      .findOne({ email })
+      .select('+password')
+      .exec();
     return user;
   }
 
