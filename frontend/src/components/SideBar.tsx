@@ -29,7 +29,7 @@ export default function SideBar() {
   return (
     <Box
       display={{base: currentChat ? 'none' : 'flex', md: 'flex' }}
-      w={{ base: '100%', md: '31%'}}
+      w={{ base: '100%', md: '60%'}}
       p={4}
       h='100vh'
       overflow='hidden'

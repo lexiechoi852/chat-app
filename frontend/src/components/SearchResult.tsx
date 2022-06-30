@@ -6,7 +6,11 @@ export default function SearchResult() {
   const { searchResult, isLoading } =  useAppSelector((state) => state.users);
   
   return (
-    <VStack mt={4} h='100vh' overflowY='auto'>
+    <VStack 
+      mt={4}
+      overflowY='auto'
+      style={{ height: isLoading ? '100px': '' }}
+    >
       { searchResult && searchResult.length > 0 && searchResult.map((user, i) => 
         <HStack 
             key={i} 
