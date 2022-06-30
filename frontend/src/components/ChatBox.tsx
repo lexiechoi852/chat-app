@@ -11,16 +11,15 @@ import { ChevronLeftIcon } from '@chakra-ui/icons';
 
 export default function ChatBox() {
   const socketRef = useRef<any>(null);
+  const messageRef = useRef<any>(null);
+
   const [messageContent, setMessageContent] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  
   const { currentChat } =  useAppSelector((state) => state.chats);
   const { user } =  useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
-
-  const scrollToLatestMessage = () => {
-
-  }
 
   const getOtherUser = (chat: Chat, currentUser: User) => {
     const user = chat.users.filter(user => user._id !== currentUser._id);
@@ -63,7 +62,7 @@ export default function ChatBox() {
   }, [currentChat])
 
   useEffect(() => {
-    scrollToLatestMessage()
+    messageRef.current?.scrollIntoView();
   }, [messages])
   
   const sendMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -142,6 +141,7 @@ export default function ChatBox() {
                     ))
                     : <>No Messages</>
                   }
+                  <Box ref={messageRef}></Box>
               </VStack>
               <FormControl mt='auto' onKeyDown={(e) => sendMessage(e)}>
                 <Input
