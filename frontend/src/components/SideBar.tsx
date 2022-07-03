@@ -1,8 +1,25 @@
 import { ArrowBackIcon, ChatIcon } from '@chakra-ui/icons'
-import { Box, Text, Tab, TabList, TabPanel, TabPanels, Tabs, HStack, Avatar, Popover, PopoverTrigger, PopoverContent, PopoverCloseButton, PopoverHeader } from '@chakra-ui/react'
+import { 
+  Box,
+  Text,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  HStack,
+  Avatar,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  Image
+} from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { getInfo } from '../store/authThunk'
+import { getInfo, logout } from '../store/authThunk'
 import { fetchAllChats } from '../store/chatsThunk'
 import { fetchAllUsers } from '../store/usersThunk'
 import ChatList from './ChatList'
@@ -43,7 +60,7 @@ export default function SideBar() {
       >
         <TabList>
           { tabIndex === 0 && 
-            <HStack w='full' mb={2}>
+            <Box display='flex' w='full' mb={2}>
               <Popover>
                 <PopoverTrigger>
                 <Avatar 
@@ -57,9 +74,10 @@ export default function SideBar() {
                 <PopoverContent ml={4}>
                   <PopoverCloseButton />
                   <PopoverHeader>
-                    <HStack>
+                    <Box display='flex'>
                       <Avatar 
                         size='md'
+                        mr={2}
                         cursor='pointer'
                         name={user?.name} 
                         src={user?.profilePicture ? user?.profilePicture : ''}
@@ -68,15 +86,21 @@ export default function SideBar() {
                         <Box fontWeight='bold'>{user?.name}</Box>
                         <Box fontSize='xs'>{user?.email}</Box>
                       </Box>
-                    </HStack>
+                    </Box>
                   </PopoverHeader>
+                  <PopoverBody>
+                    <Box display='flex' alignItems='center' cursor='pointer'>
+                      <Image mr={2} boxSize='20px' src='logout.png'/>
+                      <Box onClick={() => dispatch(logout())}>Logout</Box>
+                    </Box>
+                  </PopoverBody>
                 </PopoverContent>
               </Popover>
 
               <Tab onClick={()=>setTabIndex(1)}>
                 <ChatIcon boxSize={5} color='gray.900' />
               </Tab>
-            </HStack>
+            </Box>
           }
           { tabIndex === 1 && 
             <HStack mb={2}>
