@@ -14,6 +14,37 @@ interface NewChatProps {
 export default function NewChat({ users, chats, currentUser }: NewChatProps) {
   const dispatch = useAppDispatch();
 
+  const handleSingleChat = (user: User) => {
+    let hasOtherUserId = false;
+    let hasCurrentUserId = false;
+    let hasChat = false;
+
+    for (let chat of chats) {
+      if (!chat.isGroupChat) {
+        for (let u of chat.users) {
+          if (u._id === user._id) {
+            hasOtherUserId = true;
+          }
+
+          if (currentUser && u._id === currentUser._id) {
+            hasCurrentUserId = true;
+          }
+        }
+        
+        if (hasOtherUserId && hasCurrentUserId) {
+          hasChat = true;
+          break;
+        }
+      }
+      hasOtherUserId = false;
+      hasCurrentUserId = false;
+    }
+
+    if (!hasChat) {
+      dispatch(createSingleChat(user._id));
+    }
+  }
+
   return (
     <VStack mt={4} maxH='100vh' overflowY='auto'>
       <Box w='full'>
@@ -43,7 +74,7 @@ export default function NewChat({ users, chats, currentUser }: NewChatProps) {
           _hover={{
             background: '#f1f5f9'
           }}
-          onClick={() => dispatch(createSingleChat(user._id))}
+          onClick={() => handleSingleChat(user)}
         >
           <Avatar boxSize='40px' name={user.name} mr={2} src='' />
           <Text>{user.name}</Text>
