@@ -2,7 +2,7 @@ import { VStack, Box, Image, HStack, Avatar, Text } from '@chakra-ui/react'
 import React, { useEffect } from 'react'
 import { useAppDispatch } from '../hooks';
 import { Chat } from '../store/chatsSlice'
-import { fetchChatById } from '../store/chatsThunk';
+import { fetchAllChats, fetchChatById } from '../store/chatsThunk';
 import { User } from '../store/usersSlice';
 
 interface ChatListProps {
@@ -24,8 +24,8 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
   }
 
   useEffect(() => {
-
-  }, [chats])
+    dispatch(fetchAllChats());
+  }, [chats]);
 
   return (
     <VStack mt={4}>
