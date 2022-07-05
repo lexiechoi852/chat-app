@@ -1,4 +1,5 @@
 import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputRightElement,VStack, Text, useToast, HStack, Heading, Image } from '@chakra-ui/react'
+import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
@@ -6,8 +7,6 @@ import { reset } from '../store/authSlice';
 import { getInfo, login } from '../store/authThunk';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const toast = useToast();
@@ -17,8 +16,13 @@ export default function LoginPage() {
 
   const { user, isAuth ,isLoading, isError, message } = useAppSelector((state) => state.auth);
 
-  const submit = () => {
-    if (!email || !password) {
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    onSubmit: value => {
+      if (!value.email || !value.password) {
         toast({
             title: 'Please enter your email/ password',
             status: 'warning',
@@ -26,13 +30,10 @@ export default function LoginPage() {
             isClosable: true,
             position: 'bottom'
         });
+      }
+      dispatch(login(value));
     }
-    const loginData = {
-        email,
-        password
-    }
-    dispatch(login(loginData));
-  };
+  })
 
   useEffect(() => {
     if (isError) {
@@ -81,40 +82,54 @@ export default function LoginPage() {
           <VStack spacing={1} align={['flex-start', 'center']} w='full'>
               <Text>Enter your email and password to login</Text>
           </VStack>
-          <FormControl isRequired>
+          <form onSubmit={formik.handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+            <FormControl isRequired mb={2}>
               <FormLabel>Email Address</FormLabel>
-              <Input rounded='none' variant='filled' onChange={(e) => setEmail(e.target.value)} />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>Password</FormLabel>
-            <InputGroup>
-              <Input rounded='none' variant='filled' 
-                  type={ showPassword ? 'text' : 'password' }
-                  onChange={(e) => setPassword(e.target.value)}
+              <Input
+                id='email'
+                name='email'
+                rounded='none'
+                variant='filled'
+                value={formik.values.email}
+                onChange={formik.handleChange} 
               />
-              <InputRightElement w='4.5rem'>
+            </FormControl>
+            <FormControl isRequired mb={2}>
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input 
+                  id='password'
+                  name='password'
+                  rounded='none' 
+                  variant='filled' 
+                  type={ showPassword ? 'text' : 'password' }
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                />
+                <InputRightElement w='4.5rem'>
                   <Button h='1.75rem' size='sm' onClick={() => setShowPassword(!showPassword)}>
-                      { showPassword ? 'Hide' : 'Show' }
+                    { showPassword ? 'Hide' : 'Show' }
                   </Button>
-              </InputRightElement>
-            </InputGroup>
-        </FormControl>
-        <Button
-            rounded='none' 
-            colorScheme='blue' 
-            w={['full', 'auto']} 
-            alignSelf='end'
-            isLoading={isLoading}
-            onClick={submit}
-        >
-            Login
-        </Button>
-        <Box display='flex' flexWrap='wrap' w='100%' justifyContent='center'>
-          <Text mr={1}>Don't have an account?</Text>
-          <Text color='blue.500'>
-            <Link to="/signup">Sign Up Now</Link>
-          </Text>
-        </Box>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <Button
+              rounded='none' 
+              colorScheme='blue' 
+              w={['full', 'auto']} 
+              alignSelf='end'
+              type='submit'
+              isLoading={isLoading}
+            >
+              Login
+            </Button>
+          </form>
+          <Box display='flex' flexWrap='wrap' w='100%' justifyContent='center'>
+            <Text mr={1}>Don't have an account?</Text>
+            <Text color='blue.500'>
+              <Link to="/signup">Sign Up Now</Link>
+            </Text>
+          </Box>
       </VStack>
     </Box>
   )
