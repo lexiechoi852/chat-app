@@ -1,5 +1,5 @@
 import { SearchIcon } from '@chakra-ui/icons'
-import { Box, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 import React, { useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { searchUsers } from '../store/usersThunk'
@@ -45,7 +45,10 @@ export default function Search({ mode }: SearchProps) {
           <SearchIcon />
       </InputLeftElement>
       <Input
-        variant='filled'
+        backgroundColor='gray.200'
+        _focus={{
+          background: 'white'
+        }}
         placeholder='Search'
         onChange={(e) => debouncedSearch(e.target.value)}
       />

@@ -19,7 +19,7 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
   }
 
   const getOtherUser = (chat: Chat, currentUser: User) => {
-    const user = chat.users.filter(user => user._id !== currentUser._id);
+    const user = chat.users.filter(user => user._id !== currentUser?._id);
     return user[0];
   }
 
@@ -34,12 +34,11 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
           key={i}
           w='full'
           padding={2}
-          borderWidth='1px'
           borderRadius='lg'
           overflow='hidden'
           cursor='pointer'
           _hover={{
-            background: '#f1f5f9'
+            background: 'gray.100'
           }}
           onClick={() => fetchChat(chat._id)}
         >
