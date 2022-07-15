@@ -15,7 +15,7 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  Image
+  Image,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
@@ -23,6 +23,7 @@ import { getInfo, logout } from '../store/authThunk'
 import { fetchAllChats } from '../store/chatsThunk'
 import { fetchAllUsers } from '../store/usersThunk'
 import ChatList from './ChatList'
+import CreateGroup from './CreateGroup'
 import NewChat from './NewChat'
 import Search from './Search'
 import SearchResult from './SearchResult'
@@ -43,6 +44,10 @@ export default function SideBar() {
     dispatch(fetchAllUsers());
   }, [])
 
+  const handleTabChange = (tabIndex: number) => {
+    setTabIndex(tabIndex);
+  }
+
   return (
     <Box
       display={{base: currentChat ? 'none' : 'flex', md: 'flex' }}
@@ -50,7 +55,9 @@ export default function SideBar() {
       p={4}
       h='100vh'
       overflow='hidden'
-      background-color='gray.400'
+      border='1px'
+      backgroundColor='#F7FAFC'
+      borderColor='gray.200'
     >
       <Tabs
         w='full'
@@ -110,20 +117,49 @@ export default function SideBar() {
               <Text>New Conversion</Text>
             </HStack>
           }
+          {
+            tabIndex === 2 && 
+            <HStack mb={2}>
+              <Tab onClick={()=>setTabIndex(1)}>
+                <ArrowBackIcon color='gray.900' />
+              </Tab>
+              <Text>Choose members</Text>
+            </HStack>
+          }
+          {
+            tabIndex === 3 && 
+            <HStack mb={2}>
+              <Tab onClick={()=>setTabIndex(2)}>
+                <ArrowBackIcon color='gray.900' />
+              </Tab>
+              <Text>Name this group</Text>
+            </HStack>
+          }
         </TabList>
 
-        <TabPanels>
-          <TabPanel p={0}>
+        <TabPanels h='100%'>
+          <TabPanel p={0} h='100%'>
             <Search mode='chat' />
             <ChatList chats={chats} currentUser={user} />
           </TabPanel>
-          <TabPanel p={0}>
+          <TabPanel p={0} h='100%'>
             <Search mode='new-chat' />
             {
               searchText
-              ? <SearchResult />
-              : <NewChat users={users} chats={chats} currentUser={user} />
+              ? <SearchResult chats={chats} currentUser={user} handleTabChange={handleTabChange} mode='default' />
+              : <NewChat users={users} chats={chats} currentUser={user} handleTabChange={handleTabChange} mode='default' />
             }
+          </TabPanel>
+          <TabPanel p={0} h='100%'>
+            <Search mode='new-chat' />
+            {
+              searchText
+              ? <SearchResult chats={chats} currentUser={user} handleTabChange={handleTabChange} mode='create' />
+              : <NewChat users={users} chats={chats} currentUser={user} handleTabChange={handleTabChange} mode='create' />
+            }
+          </TabPanel>
+          <TabPanel p={0} h='100%'>
+            <CreateGroup />
           </TabPanel>
         </TabPanels>
       </Tabs>
