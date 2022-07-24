@@ -76,12 +76,12 @@ export const createGroupChat = createAsyncThunk<Chat, CreateGroupChatAttributes,
     ('chats/createGroup'), async (newChat, thunkAPI) => {
         try {
             const res = await axios.post(`${API_BASE_URL}/group`, {
-                body: {
-                    chatName: newChat.chatName,
-                    userIds: newChat.userIds
-                },
+                chatName: newChat.chatName,
+                userIds: newChat.userIds
+            }, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
                 }
             });
         

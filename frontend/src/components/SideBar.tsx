@@ -159,7 +159,7 @@ export default function SideBar() {
             }
           </TabPanel>
           <TabPanel p={0} h='100%'>
-            <CreateGroup />
+            <CreateGroup handleTabChange={handleTabChange} />
           </TabPanel>
         </TabPanels>
       </Tabs>

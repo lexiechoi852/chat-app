@@ -1,8 +1,8 @@
-import { Box, HStack, Image, VStack, Text, Avatar, Button } from '@chakra-ui/react'
+import { Box, HStack, Image, VStack, Text, Avatar, Button, Tag, TagLabel, TagCloseButton } from '@chakra-ui/react'
 import React from 'react'
-import { useAppDispatch } from '../hooks';
-import { Chat } from '../store/chatsSlice';
-import { createSingleChat, createGroupChat, CreateGroupChatAttributes } from '../store/chatsThunk';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { Chat, setSelectedUsers } from '../store/chatsSlice';
+import { createSingleChat } from '../store/chatsThunk';
 import { User } from '../store/usersSlice';
 
 interface NewChatProps {
@@ -15,6 +15,7 @@ interface NewChatProps {
 
 export default function NewChat({ users, chats, currentUser, mode, handleTabChange }: NewChatProps) {
   const dispatch = useAppDispatch();
+  const { selectedUsers } =  useAppSelector((state) => state.chats);
 
   const handleChat = (user: User) => {
     if (mode === 'default') {
@@ -49,8 +50,17 @@ export default function NewChat({ users, chats, currentUser, mode, handleTabChan
     }
 
     if (mode === 'create') {
-      
+      const found = selectedUsers.find(u => user._id === u._id);
+
+      if (!found) {
+        dispatch(setSelectedUsers([...selectedUsers, user]));
+      }
     }
+  }
+
+  const removeSelectedUser = (user: User) => {
+    const newSelectedUsers = selectedUsers.filter(u => u._id !== user._id);
+    dispatch(setSelectedUsers(newSelectedUsers));
   }
 
   return (
@@ -71,6 +81,32 @@ export default function NewChat({ users, chats, currentUser, mode, handleTabChan
           </HStack>
         </Box>
       }
+      {
+        mode === 'create' && selectedUsers &&
+        <Box w='100%' display='flex' flexWrap='wrap'>
+          {selectedUsers.map((user) => (
+            <Tag
+              size='lg'
+              key={user._id}
+              borderRadius='full'
+              variant='solid'
+              backgroundColor='gray.100'
+              color='gray.900'
+              mb={2}
+              mr={2}
+            >
+              <Avatar 
+                boxSize='20px'
+                name={user.name}
+                mr={2}
+                src={user.profilePicture ? user.profilePicture : ''}
+              />
+              <TagLabel>{user.name}</TagLabel>
+              <TagCloseButton onClick={() => removeSelectedUser(user)} />
+            </Tag>
+          ))}
+        </Box>
+      }
       <Text>Contact</Text>
       { users && users.map((user, i) => 
         <HStack 
@@ -84,7 +120,12 @@ export default function NewChat({ users, chats, currentUser, mode, handleTabChan
           }}
           onClick={() => handleChat(user)}
         >
-          <Avatar boxSize='40px' name={user.name} mr={2} src='' />
+          <Avatar 
+            boxSize='40px'
+            name={user.name}
+            mr={2} 
+            src={user.profilePicture ? user.profilePicture : ''}
+          />
           <Text>{user.name}</Text>
         </HStack>
       )}
@@ -97,7 +138,7 @@ export default function NewChat({ users, chats, currentUser, mode, handleTabChan
           bottom='16px'
           onClick={() => handleTabChange(3)}
         >
-          Skip
+          {selectedUsers && selectedUsers.length > 0 ? 'Next' : 'Skip'}
         </Button>
       }
     </VStack>

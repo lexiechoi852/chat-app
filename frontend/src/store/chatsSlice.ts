@@ -18,6 +18,7 @@ export interface Chat {
 export interface ChatState {
   chats: Chat[];
   currentChat: Chat | undefined;
+  selectedUsers: User[];
   isLoading: boolean;
   isError: boolean;
   message: string;
@@ -26,6 +27,7 @@ export interface ChatState {
 const initialState: ChatState = {
   chats: [],
   currentChat: undefined,
+  selectedUsers: [],
   isLoading: false,
   isError: false,
   message: ''
@@ -42,6 +44,12 @@ export const chatsSlice = createSlice({
     },
     resetCurrentChat: (state) => {
       state.currentChat = undefined;
+    },
+    setSelectedUsers: (state, action) => {
+      state.selectedUsers = action.payload;
+    },
+    resetSelectedUsers: (state) => {
+      state.selectedUsers = [];
     }
   },
   extraReducers: (builder) => {
@@ -98,6 +106,7 @@ export const chatsSlice = createSlice({
       .addCase(createGroupChat.fulfilled, (state, action) => {
         state.isLoading = false;
         state.chats = [...state.chats, action.payload];
+        state.currentChat = action.payload;
       })
       .addCase(createGroupChat.rejected, (state, action) => {
         state.isLoading = false;
@@ -110,6 +119,6 @@ export const chatsSlice = createSlice({
   }
 })
 
-export const { reset, resetCurrentChat } = chatsSlice.actions
+export const { reset, resetCurrentChat, setSelectedUsers, resetSelectedUsers } = chatsSlice.actions
 
 export default chatsSlice.reducer

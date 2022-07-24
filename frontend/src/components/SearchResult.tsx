@@ -1,7 +1,7 @@
-import { Avatar, HStack, VStack, Text, Spinner, Button } from '@chakra-ui/react';
+import { Avatar, HStack, VStack, Text, Spinner, Button, Box, Tag, TagLabel, TagCloseButton } from '@chakra-ui/react';
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { Chat } from '../store/chatsSlice';
+import { Chat, setSelectedUsers } from '../store/chatsSlice';
 import { createSingleChat } from '../store/chatsThunk';
 import { User } from '../store/usersSlice';
 
@@ -15,6 +15,7 @@ interface SearchResultProps {
 export default function SearchResult({ chats, currentUser, mode, handleTabChange }: SearchResultProps ) {
   const dispatch = useAppDispatch();
   const { searchResult, isLoading } =  useAppSelector((state) => state.users);
+  const { selectedUsers } =  useAppSelector((state) => state.chats);
   
   const handleChat = (user: User) => {
     if (mode === 'default') {
@@ -49,8 +50,17 @@ export default function SearchResult({ chats, currentUser, mode, handleTabChange
     }
 
     if (mode === 'create') {
-      
+      const found = selectedUsers.find(u => user._id === u._id);
+
+      if (!found) {
+        dispatch(setSelectedUsers([...selectedUsers, user]));
+      }
     }
+  }
+
+  const removeSelectedUser = (user: User) => {
+    const newSelectedUsers = selectedUsers.filter(u => u._id !== user._id);
+    dispatch(setSelectedUsers(newSelectedUsers));
   }
   
   return (
@@ -60,23 +70,59 @@ export default function SearchResult({ chats, currentUser, mode, handleTabChange
       overflowY='auto'
       style={{ height: mode === 'create' ? 'calc(100% - 120px - 32px)' : 'calc(100% - 80px - 32px)' }}
     >
-      { searchResult && searchResult.length > 0 && searchResult.map((user, i) => 
-        <HStack 
-          key={i} 
-          w='full'
-          padding={2}
-          borderWidth='1px'
-          borderRadius='lg'
-          cursor='pointer'
-          _hover={{
-            background: 'gray.100'
-          }}
-          onClick={() => handleChat(user)}
-          >
-          <Avatar boxSize='40px' name={user.name} mr={2} src='' />
-          <Text>{user.name}</Text>
-        </HStack>
-        )
+      {
+        mode === 'create' && selectedUsers &&
+        <Box w='100%' display='flex' flexWrap='wrap'>
+          {selectedUsers.map((user) => (
+            <Tag
+              size='lg'
+              key={user._id}
+              borderRadius='full'
+              variant='solid'
+              backgroundColor='gray.100'
+              color='gray.900'
+              mb={2}
+              mr={2}
+            >
+              <Avatar 
+                boxSize='20px'
+                name={user.name}
+                mr={2}
+                src={user.profilePicture ? user.profilePicture : ''}
+              />
+              <TagLabel>{user.name}</TagLabel>
+              <TagCloseButton onClick={() => removeSelectedUser(user)} />
+            </Tag>
+          ))}
+        </Box>
+      }
+      { searchResult && searchResult.length > 0 && 
+        <VStack w='100%'>
+          <Text>Contact</Text>
+          {
+            searchResult.map((user, i) => 
+              <HStack 
+                key={i} 
+                w='full'
+                padding={2}
+                borderRadius='lg'
+                cursor='pointer'
+                _hover={{
+                  background: 'gray.100'
+                }}
+                onClick={() => handleChat(user)}
+                >
+                <Avatar 
+                  boxSize='40px'
+                  name={user.name}
+                  mr={2}
+                  src={user.profilePicture ? user.profilePicture : ''}
+                />
+                <Text>{user.name}</Text>
+              </HStack>
+            )
+          }
+        </VStack>
       }
       { searchResult.length === 0 && !isLoading && <div>No result</div> }
       { isLoading &&
@@ -97,7 +143,7 @@ export default function SearchResult({ chats, currentUser, mode, handleTabChange
           bottom='16px'
           onClick={() => handleTabChange(3)}
         >
-          Skip
+          {selectedUsers && selectedUsers.length > 0 ? 'Next' : 'Skip'}
         </Button>
       }
     </VStack>
