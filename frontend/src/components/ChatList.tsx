@@ -28,14 +28,13 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
   }, [chats]);
 
   return (
-    <VStack mt={4}>
+    <VStack mt={4} maxH='100vh' h='100%' overflowY='auto' style={{ height: 'calc(100% - 32px - 40px - 36px)' }}>
       {chats && chats.map((chat, i) => 
         <Box 
           key={i}
           w='full'
           padding={2}
           borderRadius='lg'
-          overflow='hidden'
           cursor='pointer'
           _hover={{
             background: 'gray.100'
