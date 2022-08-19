@@ -23,10 +23,6 @@ export default function ChatList({ chats, currentUser } : ChatListProps) {
     return user[0];
   }
 
-  useEffect(() => {
-    dispatch(fetchAllChats());
-  }, [chats]);
-
   return (
     <VStack mt={4} maxH='100vh' h='100%' overflowY='auto' style={{ height: 'calc(100% - 32px - 40px - 36px)' }}>
       {chats && chats.map((chat, i) => 
