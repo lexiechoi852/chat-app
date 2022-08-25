@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { Chat, resetCurrentChat } from '../store/chatsSlice';
 import { User } from '../store/usersSlice';
 import io from 'socket.io-client';
-import { Message } from '../store/messagesSlice';
+import { addMessage, Message, setMessages } from '../store/messagesSlice';
 import SingleMessage from './SingleMessage';
 import GroupMessage from './GroupMessage';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
@@ -14,9 +14,9 @@ export default function ChatBox() {
   const messageRef = useRef<any>(null);
 
   const [messageContent, setMessageContent] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  
+
   const { currentChat } =  useAppSelector((state) => state.chats);
+  const { messages } =  useAppSelector((state) => state.messages);
   const { user } =  useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
@@ -35,7 +35,6 @@ export default function ChatBox() {
       });
     }
     return () => {
-      console.log('Socket Disconnect')
       socketRef.current.disconnect();
     }
   }, [])
@@ -46,16 +45,13 @@ export default function ChatBox() {
       socket.emit('joinRoom', currentChat._id);
 
       socket.emit('findAllMessages', currentChat._id, (messages: Message[]) => {
-        console.log(messages, 'messages')
-        setMessages(messages);
+        dispatch(setMessages(messages));
       })
 
       socket.on('newMessage', (message: Message) => {
-        console.log(message, 'react newMessage')
-        setMessages(messages => [...messages, message])
+        dispatch(addMessage(message));
       })
       return () => {
-        console.log(`leave current room ${currentChat._id}`)
         socket.emit('leaveRoom', currentChat._id);
       }
     }
@@ -71,11 +67,8 @@ export default function ChatBox() {
         content: messageContent,
         chatId: currentChat._id
       }
-      console.log(newMessage, 'newMessage')
       const {current: socket} = socketRef;
-      socket.emit('createMessage', newMessage, (message: Message) => {
-        setMessages([...messages, message]);
-      })
+      socket.emit('createMessage', newMessage);
       setMessageContent('');
     }
   }
