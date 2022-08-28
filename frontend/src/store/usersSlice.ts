@@ -7,6 +7,7 @@ export interface User {
   email: string;
   password: string;
   profilePicture: string;
+  description: string;
   _id: string;
   _v: number;
   createdAt: Date,
