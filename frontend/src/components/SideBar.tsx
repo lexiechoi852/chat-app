@@ -16,6 +16,17 @@ import {
   PopoverHeader,
   PopoverBody,
   Image,
+  Modal,
+  useDisclosure,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  Divider,
+  Icon,
+  Input,
+  Button,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
@@ -27,6 +38,8 @@ import CreateGroup from './CreateGroup'
 import NewChat from './NewChat'
 import Search from './Search'
 import SearchResult from './SearchResult'
+import { BsPerson, BsPencil, BsCamera } from 'react-icons/bs'
+import { useFormik } from 'formik'
 
 export default function SideBar() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -35,6 +48,20 @@ export default function SideBar() {
   const { user } =  useAppSelector((state) => state.auth);
   const { users, searchText } =  useAppSelector((state) => state.users);
   const { chats, currentChat } =  useAppSelector((state) => state.chats);
+
+  const { isOpen: isUserInfoOpen, onOpen: onUserInfoOpen, onClose: onUserInfoClose } = useDisclosure();
+  const { isOpen: isUsernameOpen, onOpen: onUsernameOpen, onClose: onUsernameClose } = useDisclosure();
+  const { isOpen: isUserDescriptionOpen, onOpen: onUserDescriptionOpen, onClose: onUserDescriptionClose } = useDisclosure();
+
+  const formik = useFormik({
+    initialValues: {
+      name: user?.name,
+      description: user?.description
+    },
+    onSubmit: value => {
+      console.log(value, 'value')
+    }
+  })
 
   useEffect(() => {
     if (!user) {
@@ -80,12 +107,11 @@ export default function SideBar() {
                 </PopoverTrigger>
                 <PopoverContent ml={4}>
                   <PopoverCloseButton />
-                  <PopoverHeader>
+                  <PopoverHeader _hover={{background: 'gray.100'}} cursor='pointer' onClick={onUserInfoOpen}>
                     <Box display='flex'>
                       <Avatar 
                         size='md'
                         mr={2}
-                        cursor='pointer'
                         name={user?.name} 
                         src={user?.profilePicture ? user?.profilePicture : ''}
                       />
@@ -103,6 +129,119 @@ export default function SideBar() {
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
+
+              <Modal isOpen={isUserInfoOpen} onClose={onUserInfoClose} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader pb={0}>Profile</ModalHeader>
+                  <ModalCloseButton boxSize={12} />
+                  <ModalBody pt={0}>
+                    <Box position='relative'>
+                      <Avatar
+                        display='flex'
+                        size='xl'
+                        mx='auto'
+                        my={3}
+                        name={user?.name} 
+                        src={user?.profilePicture ? user?.profilePicture : ''}
+                        cursor='pointer'
+                      />
+                      <Box 
+                        backgroundColor='gray.50'
+                        p={2}
+                        w='fit-content'
+                        borderRadius='full'
+                        position='absolute'
+                        bottom={0}
+                        left='55%'
+                      >
+                        <Icon as={BsCamera} boxSize={5} cursor='pointer' />
+                      </Box>
+                    </Box>
+                    <Divider />
+                      <Box display='flex' flexDir='column'>
+                        <HStack 
+                          my={2}
+                          p={4}
+                          borderRadius='lg'
+                          _hover={{background: 'gray.100'}}
+                          cursor='pointer'
+                          onClick={onUsernameOpen}
+                        >
+                          <Icon as={BsPerson} boxSize={6} mr={4} />
+                          <Box>{user?.name}</Box>
+                        </HStack>
+                        <HStack 
+                          my={2}
+                          p={4}
+                          borderRadius='lg'
+                          _hover={{background: 'gray.100'}}
+                          cursor='pointer'
+                          onClick={onUserDescriptionOpen}
+                        >
+                          <Icon as={BsPencil} ml={1} boxSize={5} mr={4} />
+                          <Box>{user?.description ? user?.description : 'About'}</Box>
+                        </HStack>
+                      </Box>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+
+              <Modal isOpen={isUsernameOpen} onClose={onUsernameClose} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Your Name</ModalHeader>
+                  <ModalCloseButton boxSize={12} />
+                  <ModalBody>
+                    <form onSubmit={formik.handleSubmit}>
+                      <Input
+                        id='name'
+                        name='name'
+                        variant='filled'
+                        value={formik.values.name}
+                        placeholder='Name (Required)'
+                        onChange={formik.handleChange} 
+                      />
+                      <Box mt={4} display='flex' justifyContent='end'>
+                        <Button mr={2} onClick={onUsernameClose}>
+                          Cancel
+                        </Button>
+                        <Button colorScheme='blue' type='submit'>
+                          Save
+                        </Button>
+                      </Box>
+                    </form>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+
+              <Modal isOpen={isUserDescriptionOpen} onClose={onUserDescriptionClose} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>About</ModalHeader>
+                  <ModalCloseButton boxSize={12} />
+                  <ModalBody pt={0}>
+                    <form onSubmit={formik.handleSubmit}>
+                      <Input
+                        id='description'
+                        name='description'
+                        variant='filled'
+                        value={formik.values.description}
+                        placeholder='Write something about yourself...'
+                        onChange={formik.handleChange} 
+                      />
+                      <Box mt={4} display='flex' justifyContent='end'>
+                        <Button mr={2} onClick={onUserDescriptionClose}>
+                          Cancel
+                        </Button>
+                        <Button colorScheme='blue' type='submit'>
+                          Save
+                        </Button>
+                      </Box>
+                    </form>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
 
               <Tab onClick={()=>setTabIndex(1)}>
                 <ChatIcon boxSize={5} color='gray.900' />
