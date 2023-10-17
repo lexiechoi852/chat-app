@@ -11,6 +11,9 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://chat.lexiechoi.com'],
+  });
   await app.listen(process.env.PORT);
 }
 bootstrap();
