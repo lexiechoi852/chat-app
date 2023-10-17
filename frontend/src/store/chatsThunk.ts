@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { Chat } from "./chatsSlice";
 
-const API_BASE_URL = '/api/chats';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/chats`;
 
 export interface CreateGroupChatAttributes {
     chatName: string,

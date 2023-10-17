@@ -2,8 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios, { AxiosError } from 'axios';
 import { User } from './usersSlice';
 
-const API_BASE_URL = '/api/auth';
-const API_USER_URL = '/api/users';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/auth`;
+const API_USER_URL = `${process.env.REACT_APP_API_URL}/api/users`;
 
 interface LoginData {
     access_token: string;
