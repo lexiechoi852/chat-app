@@ -1,8 +1,8 @@
 import { VStack, Box, Image, HStack, Avatar, Text } from '@chakra-ui/react'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useAppDispatch } from '../hooks';
 import { Chat } from '../store/chatsSlice'
-import { fetchAllChats, fetchChatById } from '../store/chatsThunk';
+import { fetchChatById } from '../store/chatsThunk';
 import { User } from '../store/usersSlice';
 
 interface ChatListProps {
