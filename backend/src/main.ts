@@ -12,7 +12,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://chat.lexiechoi.com'],
+    origin: ['http://localhost:3000', 'https://chat-app.lexiechoi.com'],
   });
   await app.listen(process.env.PORT);
 }
