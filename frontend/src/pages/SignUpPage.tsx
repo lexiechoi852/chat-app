@@ -62,7 +62,7 @@ export default function SignUpPage() {
   
       dispatch(reset());
   
-    }, [isRegisterSuccess, isError, message, navigate, dispatch])
+    }, [isRegisterSuccess, isError, message, navigate, dispatch, toast])
     
   return (
     <Box
