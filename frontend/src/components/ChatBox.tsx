@@ -55,7 +55,7 @@ export default function ChatBox() {
         socket.emit('leaveRoom', currentChat._id);
       }
     }
-  }, [currentChat])
+  }, [dispatch, currentChat])
 
   useEffect(() => {
     messageRef.current?.scrollIntoView();

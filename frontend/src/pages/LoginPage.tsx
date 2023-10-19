@@ -63,7 +63,7 @@ export default function LoginPage() {
 
     dispatch(reset());
 
-  }, [user, isAuth, isError, message, navigate, dispatch])
+  }, [user, isAuth, isError, message, navigate, dispatch, toast])
   
   return (
     <Box

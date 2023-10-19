@@ -69,7 +69,7 @@ export default function SideBar() {
     }
     dispatch(fetchAllChats());
     dispatch(fetchAllUsers());
-  }, [])
+  }, [dispatch, user])
 
   const handleTabChange = (tabIndex: number) => {
     setTabIndex(tabIndex);
