@@ -92,7 +92,7 @@ export default function LoginPage() {
           </VStack>
           <form onSubmit={formik.handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
             <FormControl isRequired mb={2}>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel htmlFor="email">Email Address</FormLabel>
               <Input
                 id='email'
                 name='email'
@@ -103,7 +103,7 @@ export default function LoginPage() {
               />
             </FormControl>
             <FormControl isRequired mb={2}>
-              <FormLabel>Password</FormLabel>
+              <FormLabel htmlFor="password">Password</FormLabel>
               <InputGroup>
                 <Input 
                   id='password'

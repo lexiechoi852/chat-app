@@ -83,7 +83,7 @@ export default function SignUpPage() {
         </VStack>
         <form onSubmit={formik.handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
           <FormControl isRequired mb={2}>
-            <FormLabel>Email Address</FormLabel>
+            <FormLabel htmlFor="email">Email Address</FormLabel>
             <Input
               name='email'
               id='email'
@@ -94,7 +94,7 @@ export default function SignUpPage() {
             />
           </FormControl>
           <FormControl isRequired mb={2}>
-              <FormLabel>Name</FormLabel>
+              <FormLabel htmlFor="name">Name</FormLabel>
               <Input
                 name='name'
                 id='name'
@@ -105,7 +105,7 @@ export default function SignUpPage() {
               />
           </FormControl>
           <FormControl isRequired mb={2}>
-              <FormLabel>Password</FormLabel>
+              <FormLabel htmlFor="password">Password</FormLabel>
               <InputGroup>
                 <Input
                   name='password'
@@ -124,7 +124,7 @@ export default function SignUpPage() {
               </InputGroup>
           </FormControl>
           <FormControl isRequired mb={2}>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel htmlFor='confirmPassword'>Confirm Password</FormLabel>
               <InputGroup>
                 <Input
                   name='confirmPassword'
