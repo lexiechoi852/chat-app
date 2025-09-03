@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://127.0.0.1:5001",
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.0",
+    "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.0.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -16,19 +16,22 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "axios": "^0.27.2",
-    "formik": "^2.2.9",
+    "axios": "^1.11.0",
+    "formik": "^2.4.6",
     "framer-motion": "^6",
     "lodash-es": "^4.17.21",
-    "react": "^18.1.0",
+    "react": "18.x",
     "react-dom": "^18.1.0",
-    "react-icons": "^4.4.0",
+    "react-icons": "^5.5.0",
     "react-redux": "^8.0.1",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.5.1",
-    "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
+    "typescript": "^5.9.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -53,8 +56,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/lodash-es": "^4.17.6"
   }
 }
