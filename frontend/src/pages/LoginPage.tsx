@@ -65,6 +65,14 @@ export default function LoginPage() {
 
   }, [user, isAuth, isError, message, navigate, dispatch, toast])
   
+  const loginAsDemo = (account: string) => {
+    if (account === '1') {
+      dispatch(login({ email: 'demo1@gmail.com', password: 'demo1' }))
+    } else {
+      dispatch(login({ email: 'demo2@gmail.com', password: 'demo2' }))
+    }
+  }
+
   return (
     <Box
       w={['full', 'lg']}
@@ -84,7 +92,7 @@ export default function LoginPage() {
           </VStack>
           <form onSubmit={formik.handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
             <FormControl isRequired mb={2}>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel htmlFor="email">Email Address</FormLabel>
               <Input
                 id='email'
                 name='email'
@@ -95,7 +103,7 @@ export default function LoginPage() {
               />
             </FormControl>
             <FormControl isRequired mb={2}>
-              <FormLabel>Password</FormLabel>
+              <FormLabel htmlFor="password">Password</FormLabel>
               <InputGroup>
                 <Input 
                   id='password'
@@ -124,6 +132,28 @@ export default function LoginPage() {
               Login
             </Button>
           </form>
+          <HStack w='full'>
+            <Button
+              rounded='none' 
+              colorScheme='teal' 
+              w='full'
+              type='button'
+              isLoading={isLoading}
+              onClick={() => loginAsDemo('1')}
+            >
+                Login as Demo 1
+            </Button>
+            <Button
+              rounded='none' 
+              colorScheme='green' 
+              w='full'
+              type='button'
+              isLoading={isLoading}
+              onClick={() => loginAsDemo('2')}
+            >
+                Login as Demo 2
+            </Button>
+          </HStack>
           <Box display='flex' flexWrap='wrap' w='100%' justifyContent='center'>
             <Text mr={1}>Don't have an account?</Text>
             <Text color='blue.500'>
